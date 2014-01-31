@@ -132,7 +132,7 @@ namespace KeepFit
             if (rosterButton == null)
             {
                 rosterButton = ToolbarManager.Instance.add("KeepFit", "rosterButton");
-                rosterButton.TexturePath = "Timmers/KeepFit/img_buttonTypeMNode";
+                rosterButton.TexturePath = "Timmers/KeepFit/KeepFit";
                 rosterButton.ToolTip = "KeepFit Roster";
                 rosterButton.OnClick += (e) =>
                 {
