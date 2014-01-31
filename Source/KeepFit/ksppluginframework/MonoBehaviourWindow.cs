@@ -21,12 +21,12 @@ public abstract class MonoBehaviourWindow : MonoBehaviourExtended
         LogFormatted_DebugOnly("WindowID:{0}", WindowID);
     }
     ///CANT USE THE ONES BELOW HERE AS WE NEED TO INSTANTIATE THE WINDOW USING AddComponent()
-    //internal MonoBehaviourWindow(String Caption)
+    //internal MonoBehaviourWindow(string Caption)
     //    : this()
     //{
     //    this.WindowCaption = Caption;
     //}
-    //internal MonoBehaviourWindow(String Caption, Rect Position)
+    //internal MonoBehaviourWindow(string Caption, Rect Position)
     //    : this(Caption)
     //{
     //    this.WindowRect = Position;
@@ -63,7 +63,7 @@ public abstract class MonoBehaviourWindow : MonoBehaviourExtended
     /// <summary>
     /// Caption of the Window
     /// </summary>
-    internal String WindowCaption = null;
+    internal string WindowCaption = null;
     /// <summary>
     /// Style of the Window
     /// </summary>
@@ -207,8 +207,8 @@ public abstract class MonoBehaviourWindow : MonoBehaviourExtended
     internal Int32 TooltipMaxWidth = 250;
 
     //Store the tooltip text from throughout the code
-    private String strToolTipText = "";
-    private String strLastTooltipText = "";
+    private string strToolTipText = "";
+    private string strLastTooltipText = "";
 
     //store how long the tooltip has been displayed for
     private Single fltTooltipTime = 0f;

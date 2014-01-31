@@ -62,6 +62,7 @@
     <Compile Include="DeadlyReentryDeathByGee.cs" />
     <Compile Include="KeepFitCrewMember.cs" />
     <Compile Include="KeepFitPartModule.cs" />
+    <Compile Include="KerbalKiller.cs" />
     <Compile Include="ksppluginframework\ConfigNodeStorage.cs" />
     <Compile Include="ksppluginframework\ExtensionsUnity.cs" />
     <Compile Include="ksppluginframework\MonoBehaviourExtended.cs" />

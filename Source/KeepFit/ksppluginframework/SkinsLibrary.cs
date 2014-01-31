@@ -47,7 +47,7 @@ internal static class SkinsLibrary
     /// <summary>
     /// Heres where we store the list of custom skins
     /// </summary>
-    internal static Dictionary<String, GUISkin> List {get; private set;}
+    internal static Dictionary<string, GUISkin> List {get; private set;}
 
     /// <summary>
     /// Sets up the default skins and associated bits - only needs to run once in OnGUI code
@@ -96,7 +96,7 @@ internal static class SkinsLibrary
     /// Sets the current skin to one of the custom skins
     /// </summary>
     /// <param name="SkinID">The string ID of the custom skin</param>
-    internal static void SetCurrent(String SkinID)
+    internal static void SetCurrent(string SkinID)
     {
         MonoBehaviourExtended.LogFormatted_DebugOnly("Setting GUISkin to {0}", SkinID);
 
@@ -172,14 +172,14 @@ internal static class SkinsLibrary
     /// </summary>
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <returns>The new copy of the skin</returns>
-    internal static GUISkin CopySkin(String SkinID)
+    internal static GUISkin CopySkin(string SkinID)
     {
         if (List.ContainsKey(SkinID))
             return List[SkinID];
         else
         {
             MonoBehaviourExtended.LogFormatted("Unable to copy GUISkin to {0}, GUISkin not found", SkinID); 
-            throw new SystemException(String.Format("Unable to copy GUISkin to {0}, GUISkin not found",SkinID));
+            throw new SystemException(string.Format("Unable to copy GUISkin to {0}, GUISkin not found",SkinID));
         }
     }
 
@@ -189,7 +189,7 @@ internal static class SkinsLibrary
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <param name="NewSkin">The new GUISkin to add</param>
     /// <param name="SetAsCurrent">Whether we should immediately set this GUISkin to the current active skin</param>
-    internal static void AddSkin(String SkinID, GUISkin NewSkin,Boolean SetAsCurrent=false)
+    internal static void AddSkin(string SkinID, GUISkin NewSkin,Boolean SetAsCurrent=false)
     {
         NewSkin.name = SkinID;
         List.Add(SkinID, NewSkin);
@@ -201,7 +201,7 @@ internal static class SkinsLibrary
     /// </summary>
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <returns>Whether it was removed</returns>
-    internal static Boolean RemoveSkin(String SkinID)
+    internal static Boolean RemoveSkin(string SkinID)
     {
         return List.Remove(SkinID);
     }
@@ -210,7 +210,7 @@ internal static class SkinsLibrary
     /// </summary>
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <returns>The ID of the skin to look for</returns>
-    internal static Boolean SkinExists(String SkinID)
+    internal static Boolean SkinExists(string SkinID)
     {
         return List.ContainsKey(SkinID);
     }
@@ -221,7 +221,7 @@ internal static class SkinsLibrary
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <param name="StyleID">The string ID of the custom style</param>
     /// <param name="NewStyle"></param>
-    internal static void AddStyle(String SkinId,GUIStyle NewStyle)
+    internal static void AddStyle(string SkinId,GUIStyle NewStyle)
     {
         if (SkinExists(SkinId))
         {
@@ -253,7 +253,7 @@ internal static class SkinsLibrary
     /// </summary>
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <param name="StyleID">The string ID of the custom style</param>
-    internal static void RemoveStyle(String SkinID, String StyleID)
+    internal static void RemoveStyle(string SkinID, string StyleID)
     {
         if (SkinExists(SkinID))
         {
@@ -266,7 +266,7 @@ internal static class SkinsLibrary
     /// </summary>
     /// <param name="DefaultSkin">Which predefined skin to use</param>
     /// <param name="StyleID">The string ID of the custom style</param>
-    internal static void RemoveStyle(DefSkinType DefaultSkin, String StyleID)
+    internal static void RemoveStyle(DefSkinType DefaultSkin, string StyleID)
     {
         GUISkin skinTemp ;
         if (DefaultSkin == DefSkinType.KSP)
@@ -283,7 +283,7 @@ internal static class SkinsLibrary
     /// <param name="SkinID">The string ID of the custom skin</param>
     /// <param name="StyleID">The string ID of the custom style</param>
     /// <returns>whether it exists or not</returns>
-    internal static Boolean StyleExists(String SkinID, String StyleID)
+    internal static Boolean StyleExists(string SkinID, string StyleID)
     {
         return (SkinExists(SkinID) && StyleExists(List[SkinID],StyleID));
     }
@@ -293,7 +293,7 @@ internal static class SkinsLibrary
     /// <param name="DefaultSkin">Which predefined skin to use</param>
     /// <param name="StyleID">The string ID of the custom style</param>
     /// <returns>Whether the Style exists</returns>
-    internal static Boolean StyleExists(DefSkinType DefaultSkin, String StyleID)
+    internal static Boolean StyleExists(DefSkinType DefaultSkin, string StyleID)
     {
         if (DefaultSkin == DefSkinType.KSP)
             return (StyleExists(DefKSPSkin, StyleID));
@@ -337,7 +337,7 @@ internal static class SkinsLibrary
     /// </summary>
     /// <param name="SkinToAction">The GUISkin we are going to adjust</param>
     /// <param name="StyleID">The string ID of the custom style</param>
-    internal static void RemoveStyle(ref GUISkin SkinToAction, String StyleID)
+    internal static void RemoveStyle(ref GUISkin SkinToAction, string StyleID)
     {
         if (StyleExists(SkinToAction, StyleID))
         {
@@ -359,7 +359,7 @@ internal static class SkinsLibrary
     /// <param name="SkinToAction">The GUISkin we are going to adjust</param>
     /// <param name="StyleID">The string ID of the custom style</param>
     /// <returns>The style you are after, or null if the ID is not there</returns>
-    internal static GUIStyle GetStyle(ref GUISkin SkinToAction,String StyleID)
+    internal static GUIStyle GetStyle(ref GUISkin SkinToAction,string StyleID)
     {
         if (StyleExists(SkinToAction, StyleID))
             return SkinToAction.customStyles.First(x => x.name == StyleID);
@@ -373,7 +373,7 @@ internal static class SkinsLibrary
     /// <param name="SkinToAction">The GUISkin we are going to adjust</param>
     /// <param name="StyleID">The string ID of the custom style</param>
     /// <returns>whether it exists or not</returns>
-    internal static Boolean StyleExists(GUISkin SkinToAction, String StyleID)
+    internal static Boolean StyleExists(GUISkin SkinToAction, string StyleID)
     {
         if (SkinToAction.customStyles.Any(x => x.name == StyleID))
             return true;

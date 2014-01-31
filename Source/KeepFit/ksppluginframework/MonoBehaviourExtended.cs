@@ -363,13 +363,13 @@ public abstract class MonoBehaviourExtended : MonoBehaviour
     /// <summary>
     /// Name of the Assembly that is running this MonoBehaviour
     /// </summary>
-    internal static String _AssemblyName
+    internal static string _AssemblyName
     { get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Name; } }
 
     /// <summary>
     /// Name of the Class - including Derivations
     /// </summary>
-    internal String _ClassName
+    internal string _ClassName
     { get { return this.GetType().Name; } }
     #endregion
 
@@ -377,10 +377,10 @@ public abstract class MonoBehaviourExtended : MonoBehaviour
     /// <summary>
     /// Some Structured logging to the debug file - ONLY RUNS WHEN DLL COMPILED IN DEBUG MODE
     /// </summary>
-    /// <param name="Message">Text to be printed - can be formatted as per String.format</param>
-    /// <param name="strParams">Objects to feed into a String.format</param>
+    /// <param name="Message">Text to be printed - can be formatted as per string.format</param>
+    /// <param name="strParams">Objects to feed into a string.format</param>
     [System.Diagnostics.Conditional("DEBUG")]
-    internal static void LogFormatted_DebugOnly(String Message, params object[] strParams)
+    internal static void LogFormatted_DebugOnly(string Message, params object[] strParams)
     {
         LogFormatted(Message, strParams);
     }
@@ -388,12 +388,12 @@ public abstract class MonoBehaviourExtended : MonoBehaviour
     /// <summary>
     /// Some Structured logging to the debug file
     /// </summary>
-    /// <param name="Message">Text to be printed - can be formatted as per String.format</param>
-    /// <param name="strParams">Objects to feed into a String.format</param>
-    internal static void LogFormatted(String Message, params object[] strParams)
+    /// <param name="Message">Text to be printed - can be formatted as per string.format</param>
+    /// <param name="strParams">Objects to feed into a string.format</param>
+    internal static void LogFormatted(string Message, params object[] strParams)
     {
-        Message = String.Format(Message, strParams);                  // This fills the params into the message
-        String strMessageLine = String.Format("{0},{2},{1}",
+        Message = string.Format(Message, strParams);                  // This fills the params into the message
+        string strMessageLine = string.Format("{0},{2},{1}",
             DateTime.Now, Message,
             _AssemblyName);                                           // This adds our standardised wrapper to each line
         UnityEngine.Debug.Log(strMessageLine);                        // And this puts it in the log

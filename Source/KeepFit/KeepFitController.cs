@@ -106,7 +106,7 @@ namespace KeepFit
                         
                         KeepFitCrewMember keepFitCrewMember = gameConfig.knownCrew[crewMember.name];
 
-                        keepFitCrewMember.accumulatGeeLoading(geeLoading, elapsed);
+                        keepFitCrewMember.accumulatGeeLoading(geeLoading, elapsed, new SimpleGeeLoadingConsequencesHandler());
                     }
                     catch (KeyNotFoundException)
                     {
@@ -115,6 +115,24 @@ namespace KeepFit
                         
                     }
                 }
+            }
+        }
+
+        internal class SimpleGeeLoadingConsequencesHandler : GeeLoadingConsequencesHandler
+        {
+            public void onGeeWarn(KeepFitCrewMember crewMember)
+            {
+                ScreenMessages.PostScreenMessage("KeepFit - Crewman " + crewMember.Name + " is reaching his G limit!", 3f, ScreenMessageStyle.UPPER_CENTER);
+            }
+
+            public void onGeeLOC(KeepFitCrewMember crewMember)
+            {
+                ScreenMessages.PostScreenMessage("KeepFit - Crewman " + crewMember.Name + " is suffering G-LOC!", 3f, ScreenMessageStyle.UPPER_CENTER);
+            }
+
+            public void onGeeFatal(KeepFitCrewMember crewMember)
+            {
+                KerbalKiller.KillKerbal(this, crewMember);
             }
         }
 
