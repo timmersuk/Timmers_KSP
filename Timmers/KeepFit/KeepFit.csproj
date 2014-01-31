@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\GameData\Timmers-KeepFit\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\GameData\Timmers-KeepFit\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,9 +38,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Toolbar">
       <HintPath>..\..\000_Toolbar\Toolbar.dll</HintPath>
@@ -50,11 +47,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigUtils.cs" />
-    <Compile Include="DeadlyReentryDeathByGee.cs" />
+    <Compile Include="ActivityLevel.cs" />
     <Compile Include="GameConfig.cs" />
+    <Compile Include="GeeLoadingAccumulator.cs" />
     <Compile Include="GeeLoadingCalculator.cs" />
-    <Compile Include="KeepFitController.cs" />
+    <Compile Include="controllers\KeepFitController.cs" />
+    <Compile Include="controllers\KeepFitCrewRosterController.cs" />
+    <Compile Include="controllers\KeepFitGeeEffectsController.cs" />
+    <Compile Include="controllers\KeepFitCrewFitnessController.cs" />
     <Compile Include="KeepFitCrewMember.cs" />
     <Compile Include="KeepFitPartModule.cs" />
     <Compile Include="KeepFitScenarioModule.cs" />
@@ -66,18 +66,10 @@
     <Compile Include="ksppluginframework\MonoBehaviourWindow.cs" />
     <Compile Include="ksppluginframework\SkinsLibrary.cs" />
     <Compile Include="Logging.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
+    <Compile Include="Period.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
@@ -88,7 +80,9 @@ DEL "$(TargetDir)Toolbar.dll"
 DEL "$(TargetDir)UnityEngine.dll" 
 DEL "$(TargetDir)UnityEngine.xml" 
 
-IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
+IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
+
+IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

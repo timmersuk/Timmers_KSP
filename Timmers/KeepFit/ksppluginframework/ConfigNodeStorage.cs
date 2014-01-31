@@ -70,26 +70,34 @@ public abstract class ConfigNodeStorage : IPersistenceLoad, IPersistenceSave
             return false;
         }
 
-        KeepFit.Logging.Log(this, "Load", "configNodeName[" + configNodeName + "]");
+        KeepFit.Logging.Log_DebugOnly(this, "Load", "configNodeName[{0}]", configNodeName);
 
         //remove the wrapper node that names the class stored
         ConfigNode cnUnwrapped = (wrapped ? cnToLoad.GetNode(configNodeName) : cnToLoad);
+        if (cnUnwrapped == null)
+        {
+            return false;
+        }
 
-        KeepFit.Logging.Log(this, "Load", "cnUnwrapped[" + cnUnwrapped + "]");
+        KeepFit.Logging.Log_DebugOnly(this, "Load", "cnUnwrapped[{0}]", cnUnwrapped);
 
         //plug it in to the object
         bool succeeded = ConfigNode.LoadObjectFromConfig(this, cnUnwrapped);
 
-        KeepFit.Logging.Log(this, "Load", "load complete [" + (succeeded ? "succeeded" : "failed") + "]");
+        KeepFit.Logging.Log_DebugOnly(this, "Load", "load complete [{0}]", (succeeded ? "succeeded" : "failed"));
         return true;
     }
 
     public virtual bool Save(ConfigNode parent)
     {
+        KeepFit.Logging.Log_DebugOnly(this, "Save", "parent [{0}]", parent);
+
         try
         {
             ConfigNode cnTemp = new ConfigNode(configNodeName);
             ConfigNode cnSaveWrapper = ConfigNode.CreateConfigFromObject(this, cnTemp);
+
+            KeepFit.Logging.Log_DebugOnly(this, "Save", "saving node [{0}]", cnSaveWrapper);
 
             parent.AddNode(cnSaveWrapper);
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace KeepFit
 {
@@ -88,7 +89,7 @@ namespace KeepFit
 
         public void Load(ConfigNode configNode)
         {
-            this.Log("Load", "Loading config for window[" + WindowCaption + "]");
+            this.Log_DebugOnly("Load", "Loading config for window[{0}]", WindowCaption);
             Config config = new Config(GetConfigNodeName());
             if (config.Load(configNode, true) && 
                 config.WindowRect != null && 
@@ -97,16 +98,16 @@ namespace KeepFit
             {
                 WindowRect = config.WindowRect;
             }
-            this.Log("Load", "Loaded config for window[" + WindowCaption + "] WindowRect[" + WindowRect + "]");
+            this.Log_DebugOnly("Load", "Loaded config for window[{0}] WindowRect[{1}]", WindowCaption, WindowRect);
         }
 
         public virtual void Save(ConfigNode configNode)
         {
-            this.Log("Save", "Saving config for window[" + WindowCaption + "]");
+            this.Log_DebugOnly("Save", "Saving config for window[{0}]", WindowCaption);
             Config config = new Config(GetConfigNodeName());
             config.WindowRect = WindowRect;
             config.Save(configNode);
-            this.Log("Load", "Saved config for window[" + WindowCaption + "] WindowRect[" + WindowRect + "] to configNode[" + configNode + "]");
+            this.Log_DebugOnly("Load", "Saved config for window[{0}] WindowRect[{1}] to configNode[{2}]", WindowCaption, WindowRect, configNode);
         }
 
         private void HandleWindowEvents(Rect resizeRect)
@@ -189,9 +190,18 @@ namespace KeepFit
             GUILayout.BeginVertical();
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("KeepFit: " + (config.enabled ? "Enabled" : "Disabled"));
             if (GUILayout.Button((config.enabled ? "Disable" : "Enable"), GUILayout.Width(80)))
             {
                 config.enabled = !config.enabled;
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("WimpMode: " + (config.wimpMode ? "Enabled" : "Disabled"));
+            if (GUILayout.Button((config.wimpMode ? "Disable" : "Enable"), GUILayout.Width(80)))
+            {
+                config.wimpMode = !config.wimpMode;
             }
             GUILayout.EndHorizontal();
 
@@ -249,7 +259,7 @@ namespace KeepFit
     /// </summary>
     public class KeepFitRosterWindow : SaveableWindow
     {
-        internal GameConfig config { get; set; }
+        internal GameConfig gameConfig { get; set; }
         internal KeepFitGameConfigWindow configWindow;
         
         private Vector2 scrollPosition;
@@ -273,12 +283,17 @@ namespace KeepFit
             GUILayout.Space(4);
             if (GUILayout.Button("Configure", GUILayout.Width(80)))
             {
-                configWindow.Visible = true;
+                configWindow.Visible = !configWindow.Visible;
             }
 
             GUILayout.Space(10);
-            foreach (KeepFitCrewMember crewInfo in config.knownCrew.Values)
+            foreach (KeepFitCrewMember crewInfo in gameConfig.knownCrew.Values)
             {
+                if (crewInfo.vesselName == null && HighLogic.LoadedSceneIsFlight)
+                {
+                    continue;
+                }
+
                 GUILayout.Label("Name: " + crewInfo.Name ); 
                 GUILayout.Label("Fitness Level: " + crewInfo.fitnessLevel);
                 GUILayout.Label("Activity Level: " + crewInfo.activityLevel);
@@ -290,10 +305,17 @@ namespace KeepFit
                 else
                 {
                     GUILayout.Label("Location: " + crewInfo.vesselName);
-                    GUILayout.Label("G(inst): " + crewInfo.instantaniousGeeLoadingAccumulator.ToString());
-                    GUILayout.Label("G(short): " + crewInfo.shortTermGeeLoadingAccumulator.ToString());
-                    GUILayout.Label("G(mid): " + crewInfo.mediumTermGeeLoadingAccumulator.ToString());
-                    GUILayout.Label("G(long): " + crewInfo.longTermGeeLoadingAccumulator.ToString());
+                    foreach (Period period in Enum.GetValues(typeof(Period)))
+                    {
+                        GeeLoadingAccumulator accum;
+                        crewInfo.geeAccums.TryGetValue(period, out accum);
+                        if (accum != null)
+                        {
+                            GUIStyle style = getGeeAccumStyle(crewInfo, period, accum);
+
+                            GUILayout.Label("G(" + period + "[" + accum.accumPeriodSeconds + "]): " + accum.GetLastGeeMeanPerSecond(), style);
+                        }
+                    }
                 }
                 GUILayout.Space(4);
             }
@@ -302,5 +324,36 @@ namespace KeepFit
             GUILayout.EndScrollView();
         }
 
+        private GUIStyle getGeeAccumStyle(KeepFitCrewMember crew, Period period, GeeLoadingAccumulator accum)
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            style.normal.textColor = Color.green;
+            style.wordWrap = false;
+
+            GeeToleranceConfig tolerance = gameConfig.GetGeeTolerance(period);
+            if (tolerance == null)
+            {
+                return style;
+            }
+
+            float healthGeeToleranceModifier = crew.fitnessLevel / gameConfig.initialFitnessLevel;
+            float geeFatal = tolerance.fatal * healthGeeToleranceModifier;
+
+            float gee = accum.GetLastGeeMeanPerSecond();
+            if (gee > geeFatal)
+            {
+                style.normal.textColor = Color.red;
+            }
+            else
+            {
+                float geeWarn = tolerance.warn * healthGeeToleranceModifier;
+                if (gee > geeWarn)
+                {
+                    style.normal.textColor = Color.yellow;
+                }
+            }
+
+            return style;
+        }
     }
 }

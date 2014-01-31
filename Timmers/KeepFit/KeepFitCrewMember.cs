@@ -5,28 +5,60 @@ using System.Text;
 
 namespace KeepFit
 {
-    public enum KeepFitActivityLevel
-    {
-        UNKNOWN,
-        TOOCRAMPEDTOMOVE,
-        CRAMPED,
-        COMFY,
-        NEUTRAL,
-        EXERCISING,
-    }
-
     internal class ActivityLevelFloatValue
     {
         [Persistent]
         internal float time;
 
         [Persistent]
-        internal KeepFitActivityLevel level;
+        internal ActivityLevel level;
 
-        internal ActivityLevelFloatValue(KeepFitActivityLevel level, float time)
+        internal ActivityLevelFloatValue()
+        {
+        }
+
+        internal ActivityLevelFloatValue(ActivityLevel level, float time)
         {
             this.level = level;
             this.time = time;
+        }
+    }
+
+    internal class GeeLoadingAccumulatorAndPeriod : ConfigNodeStorage
+    {
+        [Persistent]
+        internal Period period;
+
+        [Persistent]
+        internal GeeLoadingAccumulator accum;
+
+        internal GeeLoadingAccumulatorAndPeriod()
+        {
+        }
+
+        internal GeeLoadingAccumulatorAndPeriod(Period period, GeeLoadingAccumulator accum)
+        {
+            this.period = period;
+            this.accum = accum;
+        }
+    }
+
+    public class FloatAndActivityLevel : ConfigNodeStorage
+    {
+        [Persistent]
+        internal ActivityLevel level;
+
+        [Persistent]
+        internal float value;
+
+        internal FloatAndActivityLevel()
+        {
+        }
+
+        public FloatAndActivityLevel(ActivityLevel level, float value)
+        {
+            this.level = level;
+            this.value = value;
         }
     }
 
@@ -37,22 +69,38 @@ namespace KeepFit
     {
         [Persistent] internal String Name;
         [Persistent] internal String vesselName;
-        [Persistent] internal KeepFitActivityLevel activityLevel;
+        [Persistent] internal ActivityLevel activityLevel;
         [Persistent] internal Single fitnessLevel;
 
-        [Persistent] private float timeTooCrampedToMove;
-        [Persistent] private float timeCramped;
-        [Persistent] private float timeComfy;
-        [Persistent] private float timeNeutral;
-        [Persistent] private float timeExercising;
+        [Persistent]
+        private FloatAndActivityLevel[] timesStore;
+        internal Dictionary<ActivityLevel, float> times = new Dictionary<ActivityLevel, float>();
 
-        [Persistent] internal GeeLoadingAccumulator instantaniousGeeLoadingAccumulator = new GeeLoadingAccumulator(1); // 1 second
-        [Persistent] internal GeeLoadingAccumulator shortTermGeeLoadingAccumulator = new GeeLoadingAccumulator(5); // 5 seconds
-        [Persistent] internal GeeLoadingAccumulator mediumTermGeeLoadingAccumulator = new GeeLoadingAccumulator(5 * 60); // 5 minutes
-        [Persistent] internal GeeLoadingAccumulator longTermGeeLoadingAccumulator = new GeeLoadingAccumulator(60 * 60); // 1 hour
+        [Persistent]
+        private GeeLoadingAccumulatorAndPeriod[] geeAccumsStore;
+        internal Dictionary<Period, GeeLoadingAccumulator> geeAccums = new Dictionary<Period, GeeLoadingAccumulator>();
+
+
+        private static Dictionary<Period, GeeLoadingAccumulator> GetDefaultGeeAccums()
+        {
+            Dictionary<Period, GeeLoadingAccumulator> def = new Dictionary<Period, GeeLoadingAccumulator>();
+
+            def[Period.Inst] = new GeeLoadingAccumulator(1); // 1 second;
+            def[Period.Short] = new GeeLoadingAccumulator(5); // 5 seconds
+            def[Period.Medium] = new GeeLoadingAccumulator(1 * 60); // 1 minutes
+            def[Period.Long] = new GeeLoadingAccumulator(5 * 60); // 5 minutes
+
+            return def;
+        }
 
         public KeepFitCrewMember()
         {
+            foreach (ActivityLevel level in Enum.GetValues(typeof(ActivityLevel)))
+            {
+                times[level] = 0;
+            }
+
+            geeAccums = GetDefaultGeeAccums();
         }
 
         public KeepFitCrewMember(string name)
@@ -63,134 +111,92 @@ namespace KeepFit
 
         internal void AddTime(float elapsed)
         {
-            switch (activityLevel)
-            {
-                case KeepFitActivityLevel.TOOCRAMPEDTOMOVE:
-                    timeTooCrampedToMove += elapsed;
-                    break;
-                case KeepFitActivityLevel.CRAMPED:
-                    timeCramped += elapsed;
-                    break;
-                case KeepFitActivityLevel.COMFY:
-                    timeComfy += elapsed;
-                    break;
-                case KeepFitActivityLevel.NEUTRAL:
-                    timeNeutral += elapsed;
-                    break;
-                case KeepFitActivityLevel.EXERCISING:
-                    timeExercising += elapsed;
-                    break;
-            }
+            float existing = 0;
+
+            times.TryGetValue(activityLevel, out existing);
+            times[activityLevel] = existing + elapsed;
         }
 
-        internal class ConsequencesGeeToleranceValidator : GeeToleranceValidator
+
+        public override void OnDecodeFromConfigNode()
         {
-            private KeepFitCrewMember crewMember;
-            private GeeLoadingConsequencesHandler consequencesHandler;
-
-            internal ConsequencesGeeToleranceValidator(KeepFitCrewMember crewMember, GeeLoadingConsequencesHandler consequencesHandler)
+            // copy across the times from persist
             {
-                this.crewMember = crewMember;
-                this.consequencesHandler = consequencesHandler;
-            }
-
-            public void onGeeMeanRollover(float meanGee)
-            {
-                if (meanGee > 15) // TDXX parameterise this, and also modify based on crew fitness level
+                times.Clear();
+                if (timesStore != null)
                 {
-                    consequencesHandler.onGeeFatal(crewMember);
-                }
-                else if (meanGee > 10) // TDXX parameterise this, and also modify based on crew fitness level
-                {
-                    consequencesHandler.onGeeLOC(crewMember);
-                }
-                else if (meanGee > 5) // TDXX parameterise this, and also modify based on crew fitness level
-                {
-                    consequencesHandler.onGeeWarn(crewMember);
+                    foreach (FloatAndActivityLevel timeAndActivityLevel in timesStore)
+                    {
+                        times[timeAndActivityLevel.level] = timeAndActivityLevel.value;
+                    }
                 }
             }
-        }
 
-        internal void accumulatGeeLoading(float geeLoading, float elapsedSeconds, GeeLoadingConsequencesHandler consequencesHandler)
-        {
-            ConsequencesGeeToleranceValidator validator = new ConsequencesGeeToleranceValidator(this, consequencesHandler);
-
-            instantaniousGeeLoadingAccumulator.AccumulateGeeLoading(geeLoading, elapsedSeconds, validator);
-            shortTermGeeLoadingAccumulator.AccumulateGeeLoading(geeLoading, elapsedSeconds, validator);
-            mediumTermGeeLoadingAccumulator.AccumulateGeeLoading(geeLoading, elapsedSeconds, validator);
-            longTermGeeLoadingAccumulator.AccumulateGeeLoading(geeLoading, elapsedSeconds, validator);
-        }
-
-
-    }
-
-    internal interface GeeToleranceValidator
-    {
-        void onGeeMeanRollover(float meanGee);
-    }
-
-    internal interface GeeLoadingConsequencesHandler
-    {
-        void onGeeWarn(KeepFitCrewMember crewMember);
-        void onGeeLOC(KeepFitCrewMember crewMember);
-        void onGeeFatal(KeepFitCrewMember crewMember);
-    }
-
-    /// <summary>
-    /// Accumulator class for handling tracking of accumulated mean Gee loading.
-    ///     /// 
-    /// </summary>
-    internal class GeeLoadingAccumulator
-    {
-        /*[Persistent]*/ private readonly float accumPeriodSeconds;
-
-        [Persistent] private float currentGeeSecondsAccum;
-        [Persistent] private float currentGeeSecondsElapsed;
-        [Persistent] private float lastGeeMeanPerSecond;
-        [Persistent] private bool lastValueValid;
-
-        internal GeeLoadingAccumulator(float accumPeriodSeconds)
-        {
-            this.accumPeriodSeconds = accumPeriodSeconds;
-        }
-
-        /// <summary>
-        /// Add on some more gee loading to the accumulator, 
-        /// </summary>
-        /// <param name="geeLoading"></param>
-        /// <param name="elapsedSeconds"></param>
-        /// <returns>True if the mean has rolled over</returns>
-        internal void AccumulateGeeLoading(float geeLoading, float elapsedSeconds, GeeToleranceValidator validator)
-        {
-            // turn the gee loading into geeseconds accum and accumulate into the current buffer
-            currentGeeSecondsAccum += (geeLoading * elapsedSeconds);
-            currentGeeSecondsElapsed += elapsedSeconds;
-
-            // if the sum in currentSeconds > the size limit, then propagate it and clear down the current.
-            if (currentGeeSecondsElapsed > accumPeriodSeconds)
+            // copy across the G accums from persist
             {
-                lastGeeMeanPerSecond = currentGeeSecondsAccum / currentGeeSecondsElapsed;
-                lastValueValid = true;
-                currentGeeSecondsAccum = 0;
-                currentGeeSecondsElapsed = 0;
+                geeAccums.Clear();
+                if (geeAccumsStore != null)
+                {
+                    foreach (GeeLoadingAccumulatorAndPeriod geeAccumAndPeriod in geeAccumsStore)
+                    {
+                        geeAccums[geeAccumAndPeriod.period] = geeAccumAndPeriod.accum;
+                    }
+                }
+                
+                Dictionary<Period, GeeLoadingAccumulator> def = GetDefaultGeeAccums();
+                foreach (Period period in Enum.GetValues(typeof(Period)))
+                {
+                    GeeLoadingAccumulator accum;
+                    geeAccums.TryGetValue(period, out accum);
 
-                validator.onGeeMeanRollover(lastGeeMeanPerSecond);
+                    if (accum == null)
+                    {
+                        GeeLoadingAccumulator defAccum;
+                        def.TryGetValue(period, out defAccum);
+                        if (defAccum != null)
+                        {
+                            geeAccums[period] = defAccum;
+                        }
+                    }
+                    else if (accum.accumPeriodSeconds == 0)
+                    {
+                        GeeLoadingAccumulator defAccum;
+                        def.TryGetValue(period, out defAccum);
+                        if (defAccum != null)
+                        {
+                            accum.UpdatePeriod(defAccum.accumPeriodSeconds);
+                        }
+                    }
+                }
             }
         }
 
-        internal float GetLastGeeMeanPerSecond()
-        {
-            return lastGeeMeanPerSecond;
-        }
 
-        public override string ToString()
+        public override void OnEncodeToConfigNode()
         {
-            if (!lastValueValid)
+            // copy across the times to persist
             {
-                return "Period[" + accumPeriodSeconds + "] invalid[" + currentGeeSecondsElapsed + "]";
+                List<FloatAndActivityLevel> temp = new List<FloatAndActivityLevel>();
+                foreach (KeyValuePair<ActivityLevel, float> key in times)
+                {
+                    temp.Add(new FloatAndActivityLevel(key.Key, key.Value));
+                }
+
+                timesStore = new FloatAndActivityLevel[temp.Count];
+                temp.CopyTo(timesStore);
             }
 
-            return "Period[" + accumPeriodSeconds + "]," + lastGeeMeanPerSecond;
+            // copy across the G accums to persist
+            {
+                List<GeeLoadingAccumulatorAndPeriod> temp = new List<GeeLoadingAccumulatorAndPeriod>();
+                foreach (KeyValuePair<Period, GeeLoadingAccumulator> key in geeAccums)
+                {
+                    temp.Add(new GeeLoadingAccumulatorAndPeriod(key.Key, key.Value));
+                }
+
+                geeAccumsStore = new GeeLoadingAccumulatorAndPeriod[temp.Count];
+                temp.CopyTo(geeAccumsStore);
+            }
         }
     }
 }

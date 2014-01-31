@@ -16,7 +16,7 @@ namespace KeepFit
             if (!getVesselCrewMember(crewMember.Name, out vessel, out part, out member))
             {
                 // very odd - we couldn't find the ProtoCrewMember for this KeepFitCrewMember
-                source.Log("KerbalKiller", "very odd - we couldn't find the ProtoCrewMember for this KeepFitCrewMember");
+                source.Log_Release("KerbalKiller", "very odd - we couldn't find the ProtoCrewMember for this KeepFitCrewMember");
                 return;
             }
 
@@ -28,7 +28,7 @@ namespace KeepFit
 
             ScreenMessages.PostScreenMessage(vessel.vesselName + ": Crewmember " + member.name + " died of G-force damage!", 30.0f, ScreenMessageStyle.UPPER_CENTER);
             FlightLogger.eventLog.Add("[" + FormatTime(vessel.missionTime) + "] " + member.name + " died of G-force damage.");
-            source.Log("KerbalKiller", "" + Time.time + "]: " + vessel.vesselName + " - " + member.name + " died of G-force damage.");
+            source.Log_Release("KerbalKiller", "[{0}]: vessel[{1}] - {2} died of G-force damage.", Time.time, vessel.vesselName, member.name);
 
             if (!vessel.isEVA)
             {

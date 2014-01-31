@@ -10,7 +10,17 @@ namespace KeepFit
     /// </summary>
     public class GeeLoadingCalculator
     {
-        public static bool getGeeLoading(Vessel vessel, out float geeLoading, out string invalidReason)
+        public static float GetFitnessModifiedGeeTolerance(float tolerance, KeepFitCrewMember crew, GameConfig config)
+        {
+            float healthGeeToleranceModifier = crew.fitnessLevel / config.initialFitnessLevel;
+
+            // tolerance goes down to 50% normal tolerance if you zero out on your fitness compared to baseline
+            float result = (tolerance / 2) + tolerance * (healthGeeToleranceModifier / 2);
+
+            return result;
+        }
+
+        public static bool GetGeeLoading(Vessel vessel, out float geeLoading, out string invalidReason)
         {
             geeLoading = 0;
             invalidReason = "none";
@@ -32,14 +42,16 @@ namespace KeepFit
             if (TimeWarp.WarpMode == TimeWarp.Modes.HIGH && TimeWarp.CurrentRate > 1)
             {
                 invalidReason = "high warp";
-                return false; // don't check G-forces in high warp
+                geeLoading = 0;
+                return true; // don't check G-forces in high warp
             }
                
             float deltaTime = TimeWarp.fixedDeltaTime;
             if (deltaTime > 0.5 || deltaTime <= 0)
             {
                 invalidReason = "high physics deltaTime[" + deltaTime + "]";
-                return false; // don't check G-forces in high physics warp
+                geeLoading = 0;
+                return true; // don't check G-forces in high physics warp
             }
 
             geeLoading = (float)vessel.geeForce_immediate;

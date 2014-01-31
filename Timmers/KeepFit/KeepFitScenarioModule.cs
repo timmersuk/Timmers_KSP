@@ -22,7 +22,7 @@ namespace KeepFit
         {
             if (first)
             {
-                this.Log("Start", "Starting in debug mode");
+                this.Log_DebugOnly("Start", "Starting in debug mode");
 
                 first = false;
                 HighLogic.SaveFolder = "default";
@@ -51,7 +51,7 @@ namespace KeepFit
             ProtoScenarioModule psm = game.scenarios.Find(s => s.moduleName == typeof(KeepFitScenarioModule).Name);
             if (psm == null)
             {
-                this.Log("Start", "Adding the scenario module.");
+                this.Log_DebugOnly("Start", "Adding the scenario module.");
                 psm = game.AddProtoScenarioModule(typeof(KeepFitScenarioModule), 
                     GameScenes.TRACKSTATION, 
                     GameScenes.FLIGHT, 
@@ -106,16 +106,15 @@ namespace KeepFit
 
         public KeepFitScenarioModule()
         {
-            this.Log("Constructor", ".");
+            this.Log_DebugOnly("Constructor", ".");
 
             gameConfig = new GameConfig();
         }
 
         public override void OnAwake()
         {
-            this.Log("OnAwake", "Scene[" + HighLogic.LoadedScene + "]");
+            this.Log_DebugOnly("OnAwake", "Scene[{0}]", HighLogic.LoadedScene);
             base.OnAwake();
-
 
             if (configWindow == null)
             {
@@ -126,7 +125,7 @@ namespace KeepFit
             if (rosterWindow == null)
             {
                 rosterWindow = gameObject.AddComponent<KeepFitRosterWindow>();
-                rosterWindow.config = gameConfig;
+                rosterWindow.gameConfig = gameConfig;
                 rosterWindow.configWindow = configWindow;
             }
 
@@ -137,7 +136,7 @@ namespace KeepFit
                 rosterButton.ToolTip = "KeepFit Roster";
                 rosterButton.OnClick += (e) =>
                 {
-                    this.Log("rosterButtonOnClick", "Toggling rosterWindow visibility");
+                    this.Log_DebugOnly("rosterButtonOnClick", "Toggling rosterWindow visibility");
                     rosterWindow.Visible = !configWindow.Visible;
                 };
             }
@@ -157,25 +156,36 @@ namespace KeepFit
             // rostered not the active kerbals if we refresh
 
 
-            this.Log("OnAwake", "Adding KeepFitController");
-            KeepFitController c = gameObject.AddComponent<KeepFitController>();
-            c.SetGameConfig(gameConfig);
-            children.Add(c);
+            this.Log_DebugOnly("OnAwake", "Adding KeepFitController");
+            addController(gameObject.AddComponent<KeepFitCrewRosterController>());
+            addController(gameObject.AddComponent<KeepFitCrewFitnessController>());
+            addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
+        }
+
+        private void addController(KeepFitController controller)
+        {
+            controller.SetGameConfig(gameConfig);
+            children.Add(controller);
         }
 
         public override void OnLoad(ConfigNode gameNode)
         {
             base.OnLoad(gameNode);
 
-            this.Log("OnLoad: ", gameNode.ToString());
+            this.Log_DebugOnly("OnLoad: ", "{0}", gameNode.ToString());
             configWindow.Load(gameNode);
+            this.Log_DebugOnly("OnLoad: ", "Loaded configWindow");
+
             rosterWindow.Load(gameNode);
+            this.Log_DebugOnly("OnLoad: ", "Loaded rosterWindow");
+
             gameConfig.Load(gameNode, true);
+            this.Log_DebugOnly("OnLoad: ", "Loaded gameConfig");
         }
 
         public override void OnSave(ConfigNode gameNode)
         {
-            this.Log("OnSave", ".");
+            this.Log_DebugOnly("OnSave", ".");
             base.OnSave(gameNode);
 
             if (configWindow != null)
@@ -188,12 +198,12 @@ namespace KeepFit
             }
             gameConfig.Save(gameNode);
 
-            this.Log("OnSave", gameNode.ToString());
+            this.Log_DebugOnly("OnSave", gameNode.ToString());
         }
 
         void OnDestroy()
         {
-            this.Log("OnDestroy", ".");
+            this.Log_DebugOnly("OnDestroy", ".");
             if (rosterButton != null)
             {
                 rosterButton.Destroy();
