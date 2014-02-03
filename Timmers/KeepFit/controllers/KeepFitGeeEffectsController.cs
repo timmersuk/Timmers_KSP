@@ -22,17 +22,20 @@ namespace KeepFit
 
         public void FixedUpdate()
         {
-            this.Log_DebugOnly("FixedUpdate", ".");
+            // too spammy
+            //this.Log_DebugOnly("FixedUpdate", ".");
 
             if (gameConfig == null)
             {
-                this.Log_DebugOnly("FixedUpdate", "No gameConfig - bailing");
+                // too spammy
+                //this.Log_DebugOnly("FixedUpdate", "No gameConfig - bailing");
                 return;
             }
 
             if (!HighLogic.LoadedSceneIsFlight)
             {
-                this.Log_DebugOnly("FixedUpdate", "Not in flight scene - bailing");
+                // too spammy
+                //this.Log_DebugOnly("FixedUpdate", "Not in flight scene - bailing");
                 return;
             }
 
@@ -49,7 +52,8 @@ namespace KeepFit
             float elapsedSeconds = (float)(currentUT - lastGeeLoadingUpdateUT);
             lastGeeLoadingUpdateUT = currentUT;
 
-            this.Log_DebugOnly("FixedUpdate", "[{0}] seconds since last fixed update", elapsedSeconds);
+            // too spammy
+            //this.Log_DebugOnly("FixedUpdate", "[{0}] seconds since last fixed update", elapsedSeconds);
 
             // just check gee loading on active vessel for now
             Vessel vessel = FlightGlobals.ActiveVessel;
@@ -59,7 +63,8 @@ namespace KeepFit
                 return;
             }
 
-            this.Log_DebugOnly("FixedUpdate", "Checking gee loading for active vessel[{0}]", vessel.GetName());
+            // too spammy
+            //this.Log_DebugOnly("FixedUpdate", "Checking gee loading for active vessel[{0}]", vessel.GetName());
 
             float geeLoading;
             string invalidReason;
@@ -70,14 +75,17 @@ namespace KeepFit
             }
             else
             {
-                this.Log_DebugOnly("FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] letting the crew know", vessel.GetName(), geeLoading);
+                // too spammy
+                //this.Log_DebugOnly("FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] letting the crew know", vessel.GetName(), geeLoading);
+
                 foreach (ProtoCrewMember crewMember in vessel.GetVesselCrew())
                 {
                     try
                     {
-                        this.Log_DebugOnly("FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] letting [{2}] know", vessel.GetName(), geeLoading, crewMember.name);
+                        // too spammy
+                        //this.Log_DebugOnly("FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] letting [{2}] know", vessel.GetName(), geeLoading, crewMember.name);
 
-                        KeepFitCrewMember keepFitCrewMember = gameConfig.knownCrew[crewMember.name];
+                        KeepFitCrewMember keepFitCrewMember = gameConfig.roster.crew[crewMember.name];
 
                         handleGeeLoadingUpdates(keepFitCrewMember, geeLoading, elapsedSeconds);
                     }
@@ -90,6 +98,11 @@ namespace KeepFit
             }
         }
 
+        private enum GeeLoadingOutCome
+        {
+            Ok, GeeWarn, GeeFatal
+        }
+
         private void handleGeeLoadingUpdates(KeepFitCrewMember crew, 
                                             float gee, 
                                             float duration)
@@ -97,6 +110,7 @@ namespace KeepFit
             // modify the 'experienced' gee based on the crew member's fitness relative to the start state
             float healthGeeToleranceModifier = crew.fitnessLevel / gameConfig.initialFitnessLevel;
             
+            GeeLoadingOutCome harshestOutcome = GeeLoadingOutCome.Ok;
             foreach (Period period in Enum.GetValues(typeof(Period)))
             {
                 GeeToleranceConfig tolerance;
@@ -106,12 +120,26 @@ namespace KeepFit
 
                 if (tolerance != null && accum != null)
                 {
-                    handleGeeLoadingUpdate(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier);
+                    GeeLoadingOutCome outcome = handleGeeLoadingUpdate(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier);
+                    if (outcome > harshestOutcome)
+                    {
+                        harshestOutcome = outcome;
+                    }
                 }
-            }       
+            }   
+    
+            switch (harshestOutcome)
+            {
+                case GeeLoadingOutCome.GeeFatal:
+                    onGeeFatal(crew);
+                    break;
+                case GeeLoadingOutCome.GeeWarn:
+                    onGeeWarn(crew);
+                    break;
+            }
         }
 
-        private void handleGeeLoadingUpdate(KeepFitCrewMember crewMember, 
+        private GeeLoadingOutCome handleGeeLoadingUpdate(KeepFitCrewMember crewMember, 
                                             float geeLoading, 
                                             float elapsedSeconds, 
                                             GeeLoadingAccumulator accum, 
@@ -122,32 +150,34 @@ namespace KeepFit
             float meanG;
             if (accum.AccumulateGeeLoading(geeLoading, elapsedSeconds, out meanG))
             {
-                float fatal = tolerance.fatal * healthGeeToleranceModifier;
-                float warn = tolerance.warn * healthGeeToleranceModifier;
+                float geeWarn = GeeLoadingCalculator.GetFitnessModifiedGeeTolerance(tolerance.warn, crewMember, gameConfig);
+                float geeFatal = GeeLoadingCalculator.GetFitnessModifiedGeeTolerance(tolerance.fatal, crewMember, gameConfig);
 
-                if (meanG > fatal) 
+                if (meanG > geeFatal) 
                 {
-                    onGeeFatal(crewMember, meanG, warn, fatal);
+                    return GeeLoadingOutCome.GeeFatal;
                 }
-                else if (meanG > warn)
+                else if (meanG > geeWarn)
                 {
-                    onGeeWarn(crewMember, meanG, warn, fatal);
+                    return GeeLoadingOutCome.GeeWarn;
                 }
             }
+
+            return GeeLoadingOutCome.Ok;
         }
 
-        private void onGeeWarn(KeepFitCrewMember crewMember, float meanG, float warn, float fatal)
+        private void onGeeWarn(KeepFitCrewMember crewMember)
         {
-            string formatted = string.Format("KeepFit - Crewman {0} is reaching his G limits! ({1:000.00} - warn{2:000.00}, fatal{3:000.00}", crewMember.Name, meanG, warn, fatal);
+            string formatted = string.Format("KeepFit - Crewman {0} is reaching his G limits!", crewMember.Name);
 
             ScreenMessages.PostScreenMessage(formatted, 3f, ScreenMessageStyle.UPPER_CENTER);
         }
 
-        private void onGeeFatal(KeepFitCrewMember crewMember, float meanG, float warn, float fatal)
+        private void onGeeFatal(KeepFitCrewMember crewMember)
         {
             if (gameConfig.wimpMode)
             {
-                string formatted = string.Format("KeepFit - Crewman {0} suffered momentary G-LOC! ({1:000.00} - warn{2:D3}, fatal{3:000.00}", crewMember.Name, meanG, warn, fatal);
+                string formatted = string.Format("KeepFit - Crewman {0} suffered momentary G-LOC!", crewMember.Name);
 
                 ScreenMessages.PostScreenMessage(formatted, 3f, ScreenMessageStyle.UPPER_CENTER);
             }

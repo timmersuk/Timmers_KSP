@@ -68,7 +68,7 @@ namespace KeepFit
     public class KeepFitCrewMember : ConfigNodeStorage
     {
         [Persistent] internal String Name;
-        [Persistent] internal String vesselName;
+        //[Persistent] internal KeepFitVesselRecord vessel;
         [Persistent] internal ActivityLevel activityLevel;
         [Persistent] internal Single fitnessLevel;
 

@@ -14,6 +14,34 @@ namespace KeepFit
     {
         private Rect windowPosition = new Rect();
 
+        // Values from the .cfg file
+        [KSPField(isPersistant = false, guiActive = true, guiName="KeepFit Activity Level")]
+        public string strActivityLevel = ActivityLevel.UNKNOWN.ToString();
+
+        internal ActivityLevel activityLevel;
+
+
+        public override void OnAwake()
+        {
+            this.Log_DebugOnly("Awake", "Part[{0}] strActivityLevel[{1}]", this.name, this.strActivityLevel);
+
+            if (strActivityLevel != null)
+            {
+                activityLevel = ActivityLevel.COMFY;
+            }
+            else
+            {
+                try
+                {
+                    activityLevel = (ActivityLevel)Enum.Parse(typeof(ActivityLevel), strActivityLevel);
+                }
+                catch (ArgumentException)
+                {
+                    this.Log_DebugOnly("Awake", "Part[{0}] strActivityLevel[{1}] is not a valid ActivityLevel", this.name, this.strActivityLevel);
+                }
+            }
+        }
+
         /// <summary>
         /// Called when the part is started by Unity.
         /// </summary>

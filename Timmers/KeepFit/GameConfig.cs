@@ -78,8 +78,7 @@ namespace KeepFit
         internal float degradationWhenExercising = 1.0f;
 
         [Persistent]
-        private KeepFitCrewMember[] knownCrewStore;
-        internal Dictionary<string, KeepFitCrewMember> knownCrew = new Dictionary<string, KeepFitCrewMember>();
+        internal Roster roster = new Roster();
 
         [Persistent]
         private GeeToleranceConfigAndPeriod[] geeTolerancesStore;
@@ -133,18 +132,6 @@ namespace KeepFit
 
         public override void OnDecodeFromConfigNode()
         {
-            // copy across the crew roster from persist
-            {
-                knownCrew.Clear();
-                if (knownCrewStore != null)
-                {
-                    foreach (KeepFitCrewMember crewMember in knownCrewStore)
-                    {
-                        knownCrew[crewMember.Name] = crewMember;
-                    }
-                }
-            }
-
             // copy across the G tolerances from persist
             {
                 geeTolerances.Clear();
@@ -166,12 +153,6 @@ namespace KeepFit
 
         public override void OnEncodeToConfigNode()
         {
-            // copy across the crew roster to persist
-            {
-                knownCrewStore = new KeepFitCrewMember[knownCrew.Values.Count];
-                knownCrew.Values.CopyTo(knownCrewStore, 0);
-            }
-
             // copy across the G tolerances to persist
             {
                 List<GeeToleranceConfigAndPeriod> temp = new List<GeeToleranceConfigAndPeriod>();
@@ -182,6 +163,126 @@ namespace KeepFit
 
                 geeTolerancesStore = new GeeToleranceConfigAndPeriod[geeTolerances.Values.Count];
                 temp.CopyTo(geeTolerancesStore);
+            }
+        }
+    }
+
+    internal class KeepFitVesselRecord : ConfigNodeStorage
+    {
+        [Persistent]
+        internal string name;
+
+        [Persistent]
+        internal string id;
+
+        [Persistent]
+        internal bool hasKeepFitPartModule;
+
+        [Persistent]
+        internal ActivityLevel activityLevel;
+
+        [Persistent]
+        private KeepFitCrewMember[] crewStore;
+        internal Dictionary<string, KeepFitCrewMember> crew = new Dictionary<string, KeepFitCrewMember>();
+
+        private KeepFitVesselRecord()
+        {
+        }
+
+        internal KeepFitVesselRecord(string name, string id)
+        {
+            this.name = name;
+            this.id = id;
+        }
+
+
+        public override void OnDecodeFromConfigNode()
+        {
+            // copy across the crew roster from persist
+            {
+                crew.Clear();
+                if (crewStore != null)
+                {
+                    foreach (KeepFitCrewMember crewMember in crewStore)
+                    {
+                        crew[crewMember.Name] = crewMember;
+                    }
+                }
+            }
+        }
+
+        public override void OnEncodeToConfigNode()
+        {
+            // copy across the crew roster to persist
+            {
+                crewStore = new KeepFitCrewMember[crew.Values.Count];
+                crew.Values.CopyTo(crewStore, 0);
+            }
+        }
+
+    }
+
+
+    internal class Roster : ConfigNodeStorage
+    {
+        [Persistent]
+        internal KeepFitVesselRecord available = new KeepFitVesselRecord("Available", null);
+
+        [Persistent]
+        internal KeepFitVesselRecord assigned = new KeepFitVesselRecord("Assigned", null);
+
+        [Persistent]
+        private KeepFitVesselRecord[] vesselStore;
+        internal Dictionary<string, KeepFitVesselRecord> vessels = new Dictionary<string, KeepFitVesselRecord>();
+
+        [Persistent]
+        private KeepFitCrewMember[] crewStore;
+        internal Dictionary<string, KeepFitCrewMember> crew = new Dictionary<string, KeepFitCrewMember>();
+
+        internal Roster()
+        {
+
+        }
+
+        public override void OnDecodeFromConfigNode()
+        {
+            // copy across the vessels roster from persist
+            {
+                vessels.Clear();
+                if (vesselStore != null)
+                {
+                    foreach (KeepFitVesselRecord vessel in vesselStore)
+                    {
+                        vessels[vessel.id] = vessel;
+                    }
+                }
+            }
+            // copy across the crew roster from persist
+
+            {
+                crew.Clear();
+                if (crewStore != null)
+                {
+                    foreach (KeepFitCrewMember crewMember in crewStore)
+                    {
+                        crew[crewMember.Name] = crewMember;
+                    }
+                }
+            }
+        }
+
+        public override void OnEncodeToConfigNode()
+        {
+            // copy across the vessels roster to persist
+            {
+                vesselStore = new KeepFitVesselRecord[vessels.Values.Count];
+                vessels.Values.CopyTo(vesselStore, 0);
+            }
+
+            // copy across the crew roster to persist
+            {
+                crewStore = new KeepFitCrewMember[crew.Values.Count];
+                crew.Values.CopyTo(crewStore, 0);
             }
         }
     }

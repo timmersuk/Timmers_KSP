@@ -29,13 +29,15 @@ namespace KeepFit
         {
             if (gameConfig == null)
             {
-                this.Log_DebugOnly("UpdateFitnessLevels", "No gameConfig - bailing");
+                //too spammy
+                //this.Log_DebugOnly("UpdateFitnessLevels", "No gameConfig - bailing");
                 return;
             }
 
             if (!HighLogic.LoadedSceneIsFlight)
             {
-                this.Log_DebugOnly("UpdateFitnessLevels", "Not in flight scene - bailing");
+                // too spammy
+                //this.Log_DebugOnly("UpdateFitnessLevels", "Not in flight scene - bailing");
                 return;
             }   
 
@@ -75,7 +77,7 @@ namespace KeepFit
         {
             this.Log_DebugOnly("exerciseKerbals", "timeSinceLastExercise[{0}]", timeSinceLastExercise);
 
-            foreach (KeepFitCrewMember crewMember in gameConfig.knownCrew.Values)
+            foreach (KeepFitCrewMember crewMember in gameConfig.roster.crew.Values)
             {
                 float oldFitnessLevel = crewMember.fitnessLevel;
                 float fitnessModifier = getFitnessModifier(crewMember.activityLevel, timeSinceLastExercise);
@@ -110,11 +112,6 @@ namespace KeepFit
 
             switch (activityLevel)
             {
-                case ActivityLevel.TOOCRAMPEDTOMOVE:
-                    // too cramped to move - fitness goes down 10% per day by default
-                    fitnessModifier = (gameConfig.degradationWhenTooCrampedToMove * elapsedSeconds) / secondsPerDay;
-                    break;
-
                 case ActivityLevel.CRAMPED:
                     // cramped - fitness goes down 5% per day by default
                     fitnessModifier = (gameConfig.degradationWhenCramped * elapsedSeconds) / secondsPerDay;

@@ -105,7 +105,7 @@ public abstract class ConfigNodeStorage : IPersistenceLoad, IPersistenceSave
         }
         catch (Exception ex)
         {
-            LogFormatted("Failed to Save ConfigNode - Error:{1}", ex.Message);
+            LogFormatted("Failed to Save ConfigNode - Error:{0}", ex.Message);
             return false;
         }
     }

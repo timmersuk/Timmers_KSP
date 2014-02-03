@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\GameData\Timmers-KeepFit\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,13 +40,23 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="Toolbar">
-      <HintPath>..\..\000_Toolbar\Toolbar.dll</HintPath>
+      <HintPath>GameData\000_Toolbar\Toolbar.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\KSP_LIBS\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="addons\CompatibilityChecker.cs" />
+    <Compile Include="addons\DebugBootHelper.cs" />
+    <Compile Include="addons\InstallChecker.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statics.cs" />
+    <Compile Include="ui\ConfigWindow.cs" />
+    <Compile Include="ui\InFlightActiveVesselWindow.cs" />
+    <Compile Include="ui\RosterWindow.cs" />
+    <Compile Include="ui\SaveableWindow.cs" />
+    <Compile Include="ui\UIResources.cs" />
     <Compile Include="ActivityLevel.cs" />
     <Compile Include="GameConfig.cs" />
     <Compile Include="GeeLoadingAccumulator.cs" />
@@ -57,20 +67,18 @@
     <Compile Include="controllers\KeepFitCrewFitnessController.cs" />
     <Compile Include="KeepFitCrewMember.cs" />
     <Compile Include="KeepFitPartModule.cs" />
-    <Compile Include="KeepFitScenarioModule.cs" />
-    <Compile Include="KeepFitUI.cs" />
+    <Compile Include="addons\KeepFit.cs" />
     <Compile Include="KerbalKiller.cs" />
     <Compile Include="ksppluginframework\ConfigNodeStorage.cs" />
     <Compile Include="ksppluginframework\ExtensionsUnity.cs" />
     <Compile Include="ksppluginframework\MonoBehaviourExtended.cs" />
     <Compile Include="ksppluginframework\MonoBehaviourWindow.cs" />
     <Compile Include="ksppluginframework\SkinsLibrary.cs" />
-    <Compile Include="Logging.cs" />
+    <Compile Include="utils\Logging.cs" />
     <Compile Include="Period.cs" />
+    <Compile Include="utils\WeakReference.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>DEL "$(TargetDir)Assembly-CSharp.dll" 
@@ -80,8 +88,23 @@ DEL "$(TargetDir)Toolbar.dll"
 DEL "$(TargetDir)UnityEngine.dll" 
 DEL "$(TargetDir)UnityEngine.xml" 
 
-IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 
+xcopy /s /f /y $(ProjectDir)\GameData Package\Timmers_KeepFit\GameData\
+
+
+dir
+copy /y $(ProjectDir)..\..\LICENSE.txt Package\Timmers_KeepFit\GameData\Timmers\KeepFit
+copy /y $(ProjectDir)..\..\NOTICE.txt Package\Timmers_KeepFit\GameData\Timmers\KeepFit
+copy /y $(ProjectDir)..\..\Readme.md Package\Timmers_KeepFit\GameData\Timmers\KeepFit
+copy /y $(TargetDir)$(ProjectName).dll Package\Timmers_KeepFit\GameData\Timmers\KeepFit
+
+cd Package\Timmers_KeepFit
+dir
+"C:\Program Files\7-Zip\7z" a -tzip ..\Timmers_KeepFit.zip GameData
+
+cd ..\..
+
+IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,7 +8,6 @@ namespace KeepFit
     public enum ActivityLevel
     {
         UNKNOWN,
-        TOOCRAMPEDTOMOVE,
         CRAMPED,
         COMFY,
         NEUTRAL,

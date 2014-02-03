@@ -1,6 +1,7 @@
 ﻿using KSP.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Toolbar;
@@ -8,34 +9,6 @@ using UnityEngine;
 
 namespace KeepFit
 {
-    
-    /// <summary>
-    /// Debug only helper to chuck me straight into default save.
-    /// </summary>
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class Debug_AutoLoadPersistentSaveOnStartup : MonoBehaviour
-    {
-        public static bool first = true;
-
-        [System.Diagnostics.Conditional("DEBUG")]
-        public void Start()
-        {
-            if (first)
-            {
-                this.Log_DebugOnly("Start", "Starting in debug mode");
-
-                first = false;
-                HighLogic.SaveFolder = "default";
-                var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
-                //if (game != null && game.flightState != null && game.compatible)
-                //{
-                //    FlightDriver.StartAndFocusVessel(game, 6);
-                //}
-                //CheatOptions.InfiniteFuel = true;
-            }
-        }
-    }
-
     /*
      * This gets created when the game loads the Space Center scene. It then checks to make sure
      * the scenarios have been added to the game (so they will be automatically created in the
@@ -53,6 +26,7 @@ namespace KeepFit
             {
                 this.Log_DebugOnly("Start", "Adding the scenario module.");
                 psm = game.AddProtoScenarioModule(typeof(KeepFitScenarioModule), 
+                    GameScenes.SPACECENTER,
                     GameScenes.TRACKSTATION, 
                     GameScenes.FLIGHT, 
                     GameScenes.EDITOR, 
@@ -60,6 +34,10 @@ namespace KeepFit
             }
             else
             {
+                if (!psm.targetScenes.Any(s => s == GameScenes.SPACECENTER))
+                {
+                    psm.targetScenes.Add(GameScenes.SPACECENTER);
+                }
                 if (!psm.targetScenes.Any(s => s == GameScenes.TRACKSTATION))
                 {
                     psm.targetScenes.Add(GameScenes.TRACKSTATION);
@@ -87,17 +65,22 @@ namespace KeepFit
         /// <summary>
         /// Blizzy toolbar button for configuring the global settings of KeepFit
         /// </summary>
-        private IButton rosterButton;
+        private IButton toolbarButton;
 
         /// <summary>
         /// UI window for editing the config
         /// </summary>
-        private KeepFitGameConfigWindow configWindow;
+        private ConfigWindow configWindow;
 
         /// <summary>
         /// UI window for displaying the current crew roster
         /// </summary>
-        private KeepFitRosterWindow rosterWindow;
+        private RosterWindow rosterWindow;
+
+        /// <summary>
+        /// UI Window for in flight use for displaying the active vessel crew's fitness level
+        /// </summary>
+        private InFlightActiveVesselWindow inFlightActiveVesselWindow;
 
         /// <summary>
         /// Main copy of the per-game config
@@ -118,48 +101,58 @@ namespace KeepFit
 
             if (configWindow == null)
             {
-                configWindow = gameObject.AddComponent<KeepFitGameConfigWindow>();
+                configWindow = gameObject.AddComponent<ConfigWindow>();
                 configWindow.config = gameConfig;
             }
 
             if (rosterWindow == null)
             {
-                rosterWindow = gameObject.AddComponent<KeepFitRosterWindow>();
+                rosterWindow = gameObject.AddComponent<RosterWindow>();
                 rosterWindow.gameConfig = gameConfig;
                 rosterWindow.configWindow = configWindow;
             }
 
-            if (rosterButton == null)
+            if (inFlightActiveVesselWindow == null)
             {
-                rosterButton = ToolbarManager.Instance.add("KeepFit", "rosterButton");
-                rosterButton.TexturePath = "Timmers/KeepFit/KeepFit";
-                rosterButton.ToolTip = "KeepFit Roster";
-                rosterButton.OnClick += (e) =>
+                inFlightActiveVesselWindow = gameObject.AddComponent<InFlightActiveVesselWindow>();
+                inFlightActiveVesselWindow.gameConfig = gameConfig;
+                inFlightActiveVesselWindow.configWindow = configWindow;
+            }
+
+            if (toolbarButton == null)
+            {
+                toolbarButton = ToolbarManager.Instance.add("KeepFit", "ShowKeepFit");
+                toolbarButton.TexturePath = "Timmers/KeepFit/KeepFit";
+                toolbarButton.ToolTip = "KeepFit";
+                toolbarButton.OnClick += (e) =>
                 {
-                    this.Log_DebugOnly("rosterButtonOnClick", "Toggling rosterWindow visibility");
-                    rosterWindow.Visible = !configWindow.Visible;
+                    this.Log_DebugOnly("toolbarButtonOnClick", "Toggling keep fit Window visibility");
+                    switch (HighLogic.LoadedScene)
+                    {
+                        case GameScenes.FLIGHT:
+                            inFlightActiveVesselWindow.Visible = !inFlightActiveVesselWindow.Visible;
+                            break;
+                        case GameScenes.SPACECENTER:
+                            this.configWindow.Visible = !configWindow.Visible;
+                            break;
+                        case GameScenes.EDITOR:
+                        case GameScenes.SPH:
+                        case GameScenes.TRACKSTATION:
+                            rosterWindow.Visible = !rosterWindow.Visible;
+                            break;
+                    }
                 };
             }
 
-
-            if (!(HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
-                HighLogic.LoadedScene == GameScenes.FLIGHT ||
-                HighLogic.LoadedScene == GameScenes.EDITOR ||
-                HighLogic.LoadedScene == GameScenes.SPH))
-            {
-                // not the scene we are looking for
-                return;
-            }
-
-            // TDXX - need to find a way around the fact that the vessels list seems only
-            // to be valid in flight, so when in SPH, VAB, KSC, TRACKING we only get the 
-            // rostered not the active kerbals if we refresh
-
+            this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewRosterController");
+            addController(gameObject.AddComponent<KeepFitCrewRosterController>());
 
             this.Log_DebugOnly("OnAwake", "Adding KeepFitController");
-            addController(gameObject.AddComponent<KeepFitCrewRosterController>());
-            addController(gameObject.AddComponent<KeepFitCrewFitnessController>());
-            addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
+                addController(gameObject.AddComponent<KeepFitCrewFitnessController>());
+                addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
+            }
         }
 
         private void addController(KeepFitController controller)
@@ -204,10 +197,10 @@ namespace KeepFit
         void OnDestroy()
         {
             this.Log_DebugOnly("OnDestroy", ".");
-            if (rosterButton != null)
+            if (toolbarButton != null)
             {
-                rosterButton.Destroy();
-                rosterButton = null;
+                toolbarButton.Destroy();
+                toolbarButton = null;
             }
 
             if (children != null)
