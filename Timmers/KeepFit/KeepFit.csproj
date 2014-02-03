@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\GameData\Timmers-KeepFit\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -89,23 +89,20 @@ DEL "$(TargetDir)UnityEngine.dll"
 DEL "$(TargetDir)UnityEngine.xml" 
 
 
-xcopy /s /f /y $(ProjectDir)\GameData Package\Timmers_KeepFit\GameData\
+xcopy /s /f /y $(ProjectDir)\GameData GameData\
 
 
 dir
-copy /y $(ProjectDir)..\..\LICENSE.txt Package\Timmers_KeepFit\GameData\Timmers\KeepFit
-copy /y $(ProjectDir)..\..\NOTICE.txt Package\Timmers_KeepFit\GameData\Timmers\KeepFit
-copy /y $(ProjectDir)..\..\Readme.md Package\Timmers_KeepFit\GameData\Timmers\KeepFit
-copy /y $(TargetDir)$(ProjectName).dll Package\Timmers_KeepFit\GameData\Timmers\KeepFit
+copy /y $(ProjectDir)..\..\LICENSE.txt GameData\Timmers\KeepFit
+copy /y $(ProjectDir)..\..\NOTICE.txt GameData\Timmers\KeepFit
+copy /y $(ProjectDir)..\..\Readme.md GameData\Timmers\KeepFit
+copy /y $(TargetDir)$(ProjectName).dll GameData\Timmers\KeepFit
 
-cd Package\Timmers_KeepFit
-dir
-"C:\Program Files\7-Zip\7z" a -tzip ..\Timmers_KeepFit.zip GameData
-
-cd ..\..
 
 IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
-IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
+IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
+
+DEL $(TargetDir)$(ProjectName).dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
