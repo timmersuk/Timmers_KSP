@@ -58,11 +58,6 @@ namespace KeepFit
                 return;
             }   
 
-            // TDXX - I think this check is redundant
-            if (state != StartState.Editor)
-            {
-                RenderingManager.AddToPostDrawQueue(0, OnDraw);
-            }
          
             // perform any initialisation steps
             //  - ? list the kerbals in this vessel
@@ -83,23 +78,6 @@ namespace KeepFit
         public void Destroy()
         {
             print("KeepFitPartModule::Destroy");
-        }
-
-        private void OnDraw()
-        {
-            if (this.vessel == FlightGlobals.ActiveVessel)
-            {
-                windowPosition = GUILayout.Window(1945, windowPosition, OnWindow, "Kerbal KeepFit");
-            }
-        }
-
-        private void OnWindow(int windowId)
-        {
-            GUILayout.BeginHorizontal(GUILayout.Width(250f));
-            GUILayout.Label("This is a label");
-            GUILayout.EndHorizontal();
-
-            GUI.DragWindow();
         }
     }
 }
