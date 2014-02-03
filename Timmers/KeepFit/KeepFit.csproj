@@ -98,11 +98,12 @@ copy /y $(ProjectDir)..\..\NOTICE.txt GameData\Timmers\KeepFit
 copy /y $(ProjectDir)..\..\Readme.md GameData\Timmers\KeepFit
 copy /y $(TargetDir)$(ProjectName).dll GameData\Timmers\KeepFit
 
+"C:\Program Files\7-Zip\7z" a -tzip Timmers_KeepFit.zip GameData
+
 
 IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
-
-DEL $(TargetDir)$(ProjectName).dll</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
