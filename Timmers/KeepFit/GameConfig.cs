@@ -67,8 +67,6 @@ namespace KeepFit
         /// Persistent copy of the 
         /// </summary>
         [Persistent]
-        internal float degradationWhenTooCrampedToMove = -10.0f;
-        [Persistent]
         internal float degradationWhenCramped = -5.0f;
         [Persistent]
         internal float degradationWhenComfy = -1.0f;

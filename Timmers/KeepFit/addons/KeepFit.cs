@@ -82,6 +82,10 @@ namespace KeepFit
         /// </summary>
         private InFlightActiveVesselWindow inFlightActiveVesselWindow;
 
+        private AllVesselsWindow allVesselsWindow;
+
+
+
         /// <summary>
         /// Main copy of the per-game config
         /// </summary>
@@ -112,11 +116,18 @@ namespace KeepFit
                 rosterWindow.configWindow = configWindow;
             }
 
+            if (allVesselsWindow == null)
+            {
+                allVesselsWindow = gameObject.AddComponent<AllVesselsWindow>();
+                allVesselsWindow.gameConfig = gameConfig;
+            }
+
             if (inFlightActiveVesselWindow == null)
             {
                 inFlightActiveVesselWindow = gameObject.AddComponent<InFlightActiveVesselWindow>();
                 inFlightActiveVesselWindow.gameConfig = gameConfig;
                 inFlightActiveVesselWindow.configWindow = configWindow;
+                inFlightActiveVesselWindow.allVesselsWindow = allVesselsWindow;
             }
 
             if (toolbarButton == null)

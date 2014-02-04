@@ -16,7 +16,7 @@ namespace KeepFit
         {
             this.Log_DebugOnly("Awake", ".");
 
-            InvokeRepeating("RefreshRoster", 5, 30);
+            InvokeRepeating("RefreshRoster", 5, 10);
         }
 
 

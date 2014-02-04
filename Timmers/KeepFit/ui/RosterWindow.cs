@@ -6,12 +6,13 @@ using UnityEngine;
 
 namespace KeepFit
 {
-    class RosterWindow : SaveableWindow
+    class RosterWindow : KeepFitInfoWindow
     {
-        internal GameConfig gameConfig { get; set; }
         internal ConfigWindow configWindow;
         
         private Vector2 scrollPosition;
+        private bool showAvailable;
+        private bool showAssigned;
 
         public RosterWindow()
         {
@@ -23,70 +24,50 @@ namespace KeepFit
             this.WindowRect = new Rect(0, 0, 300, 300);
         }
 
-        internal override void DrawWindow(int id)
+        protected override void FillWindow(int id)
         {
-            base.DrawWindow(id);
-
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginVertical();
-            GUILayout.Space(4);
-            if (GUILayout.Button("Configure", GUILayout.Width(80)))
+            if (GUILayout.Button("KeepFit Settings"))
             {
                 configWindow.Visible = !configWindow.Visible;
             }
+            GUILayout.Space(4);
 
-            GUILayout.Space(10);
             if (gameConfig.roster.available != null)
             {
-                DrawRoster("Available", gameConfig.roster.available.crew.Values, false);
+                DrawRoster(id, "Available Crew", gameConfig.roster.available.crew.Values, ref showAvailable);
             }
 
-            GUILayout.Space(10);
             if (gameConfig.roster.assigned != null)
             {
-                DrawRoster("Assigned", gameConfig.roster.assigned.crew.Values, false);
-            }
-
-            if (gameConfig.roster.vessels.Count > 0)
-            {
-                GUILayout.Space(10);
-                foreach (KeepFitVesselRecord vessel in gameConfig.roster.vessels.Values)
-                {
-                    DrawRoster("Vessel : " + vessel.name + " (" + vessel.activityLevel + ")", vessel.crew.Values, true);
-                }
+                DrawRoster(id, "Assigned Crew", gameConfig.roster.assigned.crew.Values, ref showAssigned);
             }
 
             GUILayout.EndVertical();
             GUILayout.EndScrollView();
         }
 
-        private void DrawRoster(string title, ICollection<KeepFitCrewMember> crew, bool showGeeLoadings)
+        private void DrawRoster(int windowHandle, string title, ICollection<KeepFitCrewMember> crew, ref bool expanded)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(title);
+            GUILayout.FlexibleSpace();
+            if (DrawChevron(expanded))
+            {
+                expanded = !expanded;
+            }
             GUILayout.EndHorizontal();
 
-            foreach (KeepFitCrewMember crewInfo in crew)
+            if (expanded)
             {
-                GUILayout.Label("Name: " + crewInfo.Name ); 
-                GUILayout.Label("Fitness Level: " + crewInfo.fitnessLevel);
-                GUILayout.Label("Activity Level: " + crewInfo.activityLevel);
-
-                if (showGeeLoadings)
-                {
-                    foreach (Period period in Enum.GetValues(typeof(Period)))
-                    {
-                        GeeLoadingAccumulator accum;
-                        crewInfo.geeAccums.TryGetValue(period, out accum);
-                        if (accum != null)
-                        {
-                            GUIStyle style = getGeeAccumStyle(crewInfo, period, accum);
-
-                            GUILayout.Label("G(" + period + "[" + accum.accumPeriodSeconds + "]): " + accum.GetLastGeeMeanPerSecond(), style);
-                        }
-                    }
-                }
+                // indent crew listing
+                GUILayout.BeginHorizontal();
                 GUILayout.Space(4);
+                GUILayout.BeginVertical();
+                DrawCrew(windowHandle, crew, false, true);
+                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
             }
         }
 

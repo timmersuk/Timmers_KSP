@@ -52,7 +52,9 @@
     <Compile Include="addons\InstallChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="ui\KeepFitInfoWindow.cs" />
     <Compile Include="ui\ConfigWindow.cs" />
+    <Compile Include="ui\AllVesselsWindow .cs" />
     <Compile Include="ui\InFlightActiveVesselWindow.cs" />
     <Compile Include="ui\RosterWindow.cs" />
     <Compile Include="ui\SaveableWindow.cs" />
@@ -101,11 +103,14 @@ copy /y $(TargetDir)$(ProjectName).dll GameData\Timmers\KeepFit
 "C:\Program Files\7-Zip\7z" a -tzip Timmers_KeepFit.zip GameData
 
 
-IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 IF EXIST "$(ProjectDir)..\..\KSP_TEST" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST\GameData"
+IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 
-IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData"
+IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
+
+IF EXIST "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program" xcopy /s /f /y $(ProjectDir)\GameData "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData"
+IF EXIST "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

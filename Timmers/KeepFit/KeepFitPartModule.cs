@@ -12,8 +12,6 @@ namespace KeepFit
     /// </summary>
     public class KeepFitPartModule  : PartModule
     {
-        private Rect windowPosition = new Rect();
-
         // Values from the .cfg file
         [KSPField(guiActiveEditor = true, isPersistant = false, guiActive = true, guiName="KeepFit Activity Level")]
         public string strActivityLevel = ActivityLevel.UNKNOWN.ToString();
