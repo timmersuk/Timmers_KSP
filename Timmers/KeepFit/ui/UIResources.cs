@@ -65,7 +65,7 @@ namespace KeepFit
 
         public Texture2D txtTooltipBackground { get; private set; } // = new Texture2D(9, 9);//, TextureFormat.ARGB32, false);
 
-        public Dictionary<String, Texture2D> texIconsKeepFit { get; private set; }
+        public Dictionary<ActivityLevel, Texture2D> texIconsActivityLevels { get; private set; }
 
 
         private static String _ClassName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name;
@@ -96,8 +96,8 @@ namespace KeepFit
         {
             this.Log_DebugOnly("LoadTextures", "Loading Textures");
 
-            texIconsKeepFit = LoadIconDictionary("Icons");
-            this.Log_DebugOnly("LoadTexture", "KeepFit Icons Loaded: {0}", texIconsKeepFit.Count.ToString());
+            texIconsActivityLevels = LoadActivityIcons();
+            this.Log_DebugOnly("LoadTexture", "KeepFit Activity Level Icons Loaded: {0}", texIconsActivityLevels.Count.ToString());
 
             this.texPanel = LoadImageFromGameDB("img_PanelBack.png");
             this.texBarOrange = LoadImageFromGameDB("img_BarOrange.png");
@@ -113,6 +113,31 @@ namespace KeepFit
             this.btnSettingsAttention = LoadImageFromGameDB("img_buttonSettingsAttention.png");
 
             this.txtTooltipBackground = LoadImageFromGameDB("txt_TooltipBackground.png");
+        }
+
+        private Dictionary<ActivityLevel, Texture2D> LoadActivityIcons()
+        {
+            Dictionary<ActivityLevel, Texture2D> dictReturn = new Dictionary<ActivityLevel, Texture2D>();
+            Texture2D texLoading;
+
+            foreach (ActivityLevel activityLevel in Enum.GetValues(typeof(ActivityLevel)))
+            {
+                String iconName = "activityLevel_" + activityLevel.ToString().ToLower() + ".png";
+
+                try
+                { 
+                    texLoading = LoadImageFromGameDB(iconName, DBPathTextures);
+                    if (texLoading != null)
+                    {
+                        dictReturn[activityLevel] = texLoading;
+                    }
+                }
+                catch (Exception)
+                {
+                    this.Log_DebugOnly("LoadActivityIcons", "Unable to load Texture from GameDB:{0}", iconName);
+                }
+            }
+            return dictReturn;
         }
 
         private Dictionary<String, Texture2D> LoadIconDictionary(String IconFolderName)

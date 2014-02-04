@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace KeepFit
 {
-    public partial class InFlightActiveVesselWindow : MonoBehaviourWindow
+    public partial class InFlightActiveVesselWindow : SaveableWindow
     {
         //GlobalSettings
         private UIResources uiResources = new UIResources();
@@ -82,26 +82,36 @@ namespace KeepFit
 
             GUILayout.BeginVertical();
 
-            //What will the height of the panel be
-//            this.WindowRect.height = ((gameConfig.knownCrew.Count + 1) * intLineHeight * (1 + Enum.GetValues(typeof(Period)).Length)) + 12;
-            this.WindowRect.height = ((1 + 1) * intLineHeight * (1 + Enum.GetValues(typeof(Period)).Length)) + 12;
-
-            bool first = true;
-            //Now draw the main panel
-
             KeepFitVesselRecord vessel;
             gameConfig.roster.vessels.TryGetValue(FlightGlobals.ActiveVessel.id.ToString(), out vessel);
-            if (vessel != null)
+            if (vessel == null)
             {
-                GUILayout.Label("Vessel : " + vessel.name + "(" + vessel.activityLevel + ")");
+                //What will the height of the panel be
+                this.WindowRect.height = uiResources.btnChevronUp.height + 12;
+            }
+            else
+            {
+                this.WindowRect.height = ((vessel.crew.Count() + 1) * intLineHeight * (1 + Enum.GetValues(typeof(Period)).Length)) + 12;
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(vessel.name);
+                Texture2D texActivityLevel;
+                uiResources.texIconsActivityLevels.TryGetValue(vessel.activityLevel, out texActivityLevel);
+                if (texActivityLevel == null)
+                {
+                    GUILayout.Label("(" + vessel.activityLevel + ")");
+                }
+                else
+                {
+                    GUILayout.Label(new GUIContent(uiResources.texIconsActivityLevels[vessel.activityLevel], vessel.activityLevel.ToString()));
+                }
+                GUILayout.Label(" x" + vessel.crew.Count());
+                GUILayout.FlexibleSpace();
+                // TDXX - add button to show/hide crew info here
+                GUILayout.EndHorizontal();
 
+                GUILayout.Space(4);
                 foreach (KeepFitCrewMember crewMember in vessel.crew.Values)
                 {
-                    if (first)
-                    {
-                        GUILayout.Space(4);
-                        first = false;
-                    }
 
                     // first line - crewmember name
                     GUILayout.BeginHorizontal();

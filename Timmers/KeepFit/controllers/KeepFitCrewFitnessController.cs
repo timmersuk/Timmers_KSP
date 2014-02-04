@@ -118,7 +118,7 @@ namespace KeepFit
                     break;
 
                 case ActivityLevel.COMFY:
-                    // comfy - fitness goes down 1% per day by default
+                    // comfy - fitness goes down 1% per day by defaultt@
                     fitnessModifier = (gameConfig.degradationWhenComfy * elapsedSeconds) / secondsPerDay;
                     break;
 

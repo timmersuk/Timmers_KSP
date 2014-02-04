@@ -102,7 +102,10 @@ copy /y $(TargetDir)$(ProjectName).dll GameData\Timmers\KeepFit
 
 
 IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
+IF EXIST "$(ProjectDir)..\..\KSP_TEST" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST\GameData"
+
 IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
+IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
