@@ -40,7 +40,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="Toolbar">
-      <HintPath>GameData\000_Toolbar\Toolbar.dll</HintPath>
+      <HintPath>..\..\KSP_LIBS\Toolbar.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\KSP_LIBS\UnityEngine.dll</HintPath>
