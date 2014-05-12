@@ -229,8 +229,6 @@ namespace KeepFit
         [Persistent]
         internal KeepFitVesselRecord assigned = new KeepFitVesselRecord("Assigned", null);
 
-        [Persistent]
-        private KeepFitVesselRecord[] vesselStore;
         internal Dictionary<string, KeepFitVesselRecord> vessels = new Dictionary<string, KeepFitVesselRecord>();
 
         [Persistent]
@@ -244,19 +242,7 @@ namespace KeepFit
 
         public override void OnDecodeFromConfigNode()
         {
-            // copy across the vessels roster from persist
-            {
-                vessels.Clear();
-                if (vesselStore != null)
-                {
-                    foreach (KeepFitVesselRecord vessel in vesselStore)
-                    {
-                        vessels[vessel.id] = vessel;
-                    }
-                }
-            }
             // copy across the crew roster from persist
-
             {
                 crew.Clear();
                 if (crewStore != null)
@@ -271,12 +257,6 @@ namespace KeepFit
 
         public override void OnEncodeToConfigNode()
         {
-            // copy across the vessels roster to persist
-            {
-                vesselStore = new KeepFitVesselRecord[vessels.Values.Count];
-                vessels.Values.CopyTo(vesselStore, 0);
-            }
-
             // copy across the crew roster to persist
             {
                 crewStore = new KeepFitCrewMember[crew.Values.Count];

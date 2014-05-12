@@ -94,7 +94,7 @@ namespace KeepFit
             {
                 GUILayout.Label(new GUIContent(uiResources.texIconsActivityLevels[vessel.activityLevel], vessel.activityLevel.ToString()));
             }
-            GUILayout.Label(" x" + vessel.crew.Count());
+            GUILayout.Label(" - (" + vessel.crew.Count() + ")");
             GUILayout.FlexibleSpace();
             if (showExpandToggle && DrawChevron(expanded))
             {

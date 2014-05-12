@@ -29,10 +29,9 @@ namespace KeepFit
                 this.Log_DebugOnly("RefreshRoster", "No gameConfig - bailing");
                 return;
             }
+            
 
-
-            Dictionary<string, KeepFitCrewMember> oldRoster = new Dictionary<string, KeepFitCrewMember>(gameConfig.roster.crew);
-            gameConfig.roster.crew.Clear();
+            Dictionary<string, KeepFitCrewMember> roster = gameConfig.roster.crew;
             gameConfig.roster.available.crew.Clear();
             gameConfig.roster.assigned.crew.Clear();
             gameConfig.roster.vessels.Clear();
@@ -40,7 +39,6 @@ namespace KeepFit
             // first go through all the crew in the system roster - find all the ones not doing anything,
             // and get them working for a living
             {
-
                 CrewRoster crewRoster = HighLogic.CurrentGame.CrewRoster;
                 foreach (ProtoCrewMember crewMember in crewRoster)
                 {
@@ -48,15 +46,16 @@ namespace KeepFit
                     {
                         case ProtoCrewMember.RosterStatus.AVAILABLE:
                             // you're sat on your arse in the crew building, so you can get down to the gym
-                            updateRosters(oldRoster, gameConfig.roster.crew, gameConfig.roster.available, crewMember.name, ActivityLevel.EXERCISING);
+                            updateRosters(roster, gameConfig.roster.available, crewMember.name, ActivityLevel.EXERCISING);
                             break;
                         case ProtoCrewMember.RosterStatus.ASSIGNED:
                             // in flight - do this so we don't lose track of kerbals in the non-flight windows
                             // (until i sort out how to get all current vessels outside of flight
-                            KeepFitCrewMember temp = updateRosters(oldRoster, gameConfig.roster.crew, gameConfig.roster.assigned, crewMember.name, ActivityLevel.UNKNOWN);
-
-                            // bodge so we don't lose stored crew settings
-                            oldRoster[crewMember.name] = temp;
+                            updateRosters(roster, gameConfig.roster.assigned, crewMember.name, ActivityLevel.UNKNOWN);
+                            break;
+                        case ProtoCrewMember.RosterStatus.DEAD:
+                        case ProtoCrewMember.RosterStatus.MISSING:
+                            //roster.Remove(crewMember.name);
                             break;
                     }
                 }
@@ -66,7 +65,12 @@ namespace KeepFit
             // and update their stored activityLevel
             foreach (Vessel vessel in FlightGlobals.Vessels)
             {
-                KeepFitVesselRecord vesselRecord = new KeepFitVesselRecord(vessel.name, vessel.id.ToString());
+                if (IsUnmanned(vessel))
+                {
+                    continue;
+                }
+
+                KeepFitVesselRecord vesselRecord = new KeepFitVesselRecord(vessel.vesselName, vessel.id.ToString());
 
                 gameConfig.roster.vessels[vessel.id.ToString()] = vesselRecord;
 
@@ -98,7 +102,7 @@ namespace KeepFit
                 {
                     foreach (ProtoCrewMember crewMember in vessel.GetVesselCrew())
                     {
-                        updateRosters(oldRoster, gameConfig.roster.crew, vesselRecord, crewMember.name, vesselRecord.activityLevel);
+                        updateRosters(roster, vesselRecord, crewMember.name, vesselRecord.activityLevel);
                     }
                 }
                 else
@@ -107,11 +111,27 @@ namespace KeepFit
                     {
                         foreach (ProtoCrewMember crewMember in part.protoModuleCrew)
                         {
-                            updateRosters(oldRoster, gameConfig.roster.crew, vesselRecord, crewMember.name, vesselRecord.activityLevel);
-
+                            updateRosters(roster, vesselRecord, crewMember.name, vesselRecord.activityLevel);
                         }
                     }
                 }
+            }
+        }
+
+        private bool IsUnmanned(Vessel vessel)
+        {
+            return (GetCrewCount(vessel) == 0);
+        }
+
+        private int GetCrewCount(Vessel vessel)
+        {
+            if (vessel.packed && !vessel.loaded)
+            {
+                return vessel.protoVessel.GetVesselCrew().Count;
+            }
+            else
+            {
+                return vessel.GetCrewCount();
             }
         }
 
@@ -126,8 +146,7 @@ namespace KeepFit
             return ActivityLevel.CRAMPED;
         }
 
-        private KeepFitCrewMember updateRosters(Dictionary<string, KeepFitCrewMember> oldRoster,
-                                                Dictionary<string, KeepFitCrewMember> newRoster,
+        private KeepFitCrewMember updateRosters(Dictionary<string, KeepFitCrewMember> roster,
                                                 KeepFitVesselRecord vessel,
                                                 string name,
                                                 ActivityLevel activityLevel)
@@ -135,12 +154,10 @@ namespace KeepFit
             this.Log_DebugOnly("updateRosters", "updating crewMember[{0}] activityLevel[{1}]]", name, activityLevel);
 
             KeepFitCrewMember keepFitCrewMember = null;
-            oldRoster.TryGetValue(name, out keepFitCrewMember);
+            roster.TryGetValue(name, out keepFitCrewMember);
             if (keepFitCrewMember != null)
             {
                 this.Log_DebugOnly("updateRosters", "crewMember[{0}] was in the old roster", name);
-
-                oldRoster.Remove(name);
             }
             else
             {
@@ -149,11 +166,12 @@ namespace KeepFit
                 // not in the old roster - add him to the new one ... 
                 keepFitCrewMember = new KeepFitCrewMember(name);
                 keepFitCrewMember.fitnessLevel = gameConfig.initialFitnessLevel;
+                roster[name] = keepFitCrewMember;
             }
 
             //keepFitCrewMember.vessel = vessel;
             keepFitCrewMember.activityLevel = activityLevel;
-            newRoster[name] = keepFitCrewMember;
+            
 
             vessel.crew[name] = keepFitCrewMember;
 
