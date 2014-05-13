@@ -100,7 +100,7 @@ copy /y $(ProjectDir)..\..\Readme.md GameData\Timmers\KeepFit
 copy /y $(TargetDir)$(ProjectName).dll GameData\Timmers\KeepFit
 
 "C:\Program Files\7-Zip\7z" a -tzip Timmers_KeepFit.zip GameData
-
+copy Timmers_KeepFit.zip $(ProjectDir)\..\..\
 
 IF EXIST "$(ProjectDir)..\..\KSP_TEST" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST\GameData"
 IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\Timmers\$(ProjectName)\$(ProjectName).dll"
