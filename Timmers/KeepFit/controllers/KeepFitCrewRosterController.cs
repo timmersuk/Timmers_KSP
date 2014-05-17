@@ -26,7 +26,7 @@ namespace KeepFit
 
             if (gameConfig == null)
             {
-                this.Log_DebugOnly("RefreshRoster", "No gameConfig - bailing");
+                //this.Log_DebugOnly("RefreshRoster", "No gameConfig - bailing");
                 return;
             }
             

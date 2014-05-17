@@ -48,29 +48,16 @@ namespace KeepFit
             print("KeepFitPartModule::OnStart");
 
             base.OnStart(state);
-
-
-            if (!HighLogic.LoadedSceneIsFlight)
-            {
-                print("KeepFitPartModule::OnStart - Not in flight scene - bailing");
-                return;
-            }   
-
          
             // perform any initialisation steps
             //  - ? list the kerbals in this vessel
             //  - ? setup vessel kerbals KeepFit status UI?
+            // XX - actually all these things are currently done by the controllers - XX
         }
 
         public void Update()
         {
             //print("KeepFitPartModule::Update");
-
-            if (!HighLogic.LoadedSceneIsFlight)
-            {
-                print("KeepFitPartModule::Update - Not in flight scene - bailing");
-                return;
-            }
         }
 
         public void Destroy()

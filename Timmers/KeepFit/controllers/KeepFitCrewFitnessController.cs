@@ -16,13 +16,12 @@ namespace KeepFit
         {
             this.Log_DebugOnly("Awake", ".");
 
-            if (!HighLogic.LoadedSceneIsFlight)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT || 
+                HighLogic.LoadedScene == GameScenes.SPACECENTER ||
+                HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
-                this.Log_DebugOnly("Awake", "Not in flight scene - not starting timer tasks");
-                return;
-            }  
-
-            InvokeRepeating("UpdateFitnessLevels", 1, 1);
+                InvokeRepeating("UpdateFitnessLevels", 1, 1);
+            }
         }
 
         private void UpdateFitnessLevels()

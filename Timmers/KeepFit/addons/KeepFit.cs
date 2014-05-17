@@ -159,9 +159,15 @@ namespace KeepFit
             addController(gameObject.AddComponent<KeepFitCrewRosterController>());
 
             this.Log_DebugOnly("OnAwake", "Adding KeepFitController");
-            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT ||
+                HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
+                HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 addController(gameObject.AddComponent<KeepFitCrewFitnessController>());
+            }
+
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
                 addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
             }
         }
