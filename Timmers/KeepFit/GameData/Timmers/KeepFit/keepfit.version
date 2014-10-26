@@ -1,9 +1,9 @@
 {
 	"NAME":"keepfit",
 	"URL":"http://ksp-avc.cybutek.net/version.php?id=75",
-	"DOWNLOAD":"https://github.com/timmersuk/Timmers_KSP/releases/tag/0.2.0.1",
+	"DOWNLOAD":"https://github.com/timmersuk/Timmers_KSP/releases/tag/0.2.0.3",
 	"CHANGE_LOG_URL":"https://github.com/timmersuk/Timmers_KSP/commits/master",
-	"VERSION":{"MAJOR":0,"MINOR":2,"PATCH":0,"BUILD":1},
+	"VERSION":{"MAJOR":0,"MINOR":2,"PATCH":0,"BUILD":3},
 	"KSP_VERSION":{"MAJOR":0,"MINOR":25,"PATCH":0},
 	"KSP_VERSION_MIN":{"MAJOR":0,"MINOR":25,"PATCH":0},
 	"KSP_VERSION_MAX":{"MAJOR":0,"MINOR":25,"PATCH":0}
