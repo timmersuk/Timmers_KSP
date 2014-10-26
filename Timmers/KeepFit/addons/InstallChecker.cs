@@ -10,7 +10,7 @@ namespace KeepFit
     /// <summary>
     /// Majiir's compatibility checker (http://forum.kerbalspaceprogram.com/threads/65395-Voluntarily-Locking-Plugins-to-a-Particular-KSP-Version?p=899895&viewfull=1#post899895)
     /// </summary>
-    [KSPAddonFixed(KSPAddon.Startup.MainMenu, true, typeof(InstallChecker))]
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     internal class InstallChecker : MonoBehaviour
     {
         protected void Start()

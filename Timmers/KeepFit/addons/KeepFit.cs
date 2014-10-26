@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Toolbar;
 using UnityEngine;
 
 namespace KeepFit
@@ -63,9 +62,9 @@ namespace KeepFit
         private readonly List<KeepFitController> children = new List<KeepFitController>();
         
         /// <summary>
-        /// Blizzy toolbar button for configuring the global settings of KeepFit
+        /// AppLauncher button
         /// </summary>
-        private IButton toolbarButton;
+        private ApplicationLauncherButton appLauncherButton;
 
         /// <summary>
         /// UI window for editing the config
@@ -130,29 +129,31 @@ namespace KeepFit
                 inFlightActiveVesselWindow.allVesselsWindow = allVesselsWindow;
             }
 
-            if (toolbarButton == null)
+            if (appLauncherButton != null)
             {
-                toolbarButton = ToolbarManager.Instance.add("KeepFit", "ShowKeepFit");
-                toolbarButton.TexturePath = "Timmers/KeepFit/KeepFit";
-                toolbarButton.ToolTip = "KeepFit";
-                toolbarButton.OnClick += (e) =>
-                {
-                    this.Log_DebugOnly("toolbarButtonOnClick", "Toggling keep fit Window visibility");
-                    switch (HighLogic.LoadedScene)
-                    {
-                        case GameScenes.FLIGHT:
-                            inFlightActiveVesselWindow.Visible = !inFlightActiveVesselWindow.Visible;
-                            break;
-                        case GameScenes.SPACECENTER:
-                            this.configWindow.Visible = !configWindow.Visible;
-                            break;
-                        case GameScenes.EDITOR:
-                        case GameScenes.SPH:
-                        case GameScenes.TRACKSTATION:
-                            rosterWindow.Visible = !rosterWindow.Visible;
-                            break;
-                    }
-                };
+                this.Log_DebugOnly("OnAwake", "AppLauncher button already here");
+            
+            }
+            else
+            {
+                this.Log_DebugOnly("OnAwake", "Adding AppLauncher button");
+            
+                Texture toolbarButtonTexture = (Texture)GameDatabase.Instance.GetTexture("Timmers/KeepFit/KeepFit", false);
+                ApplicationLauncher.AppScenes scenes = ApplicationLauncher.AppScenes.FLIGHT |
+                                                       ApplicationLauncher.AppScenes.MAPVIEW |
+                                                       ApplicationLauncher.AppScenes.SPACECENTER |
+                                                       ApplicationLauncher.AppScenes.SPH |
+                                                       ApplicationLauncher.AppScenes.VAB |
+                                                       ApplicationLauncher.AppScenes.TRACKSTATION;
+
+                appLauncherButton = ApplicationLauncher.Instance.AddModApplication(onAppLaunchToggleOn,
+                                                               onAppLaunchToggleOff,
+                                                               onAppLaunchHoverOn,
+                                                               onAppLaunchHoverOff,
+                                                               onAppLaunchEnable,
+                                                               onAppLaunchDisable,
+                                                               scenes,
+                                                               toolbarButtonTexture);
             }
 
             this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewRosterController");
@@ -170,6 +171,80 @@ namespace KeepFit
             {
                 addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
             }
+        }
+
+        void onAppLaunchToggleOn() 
+        {
+            this.Log_DebugOnly("onAppLaunchToggleOn", "ToggleOn called - showing windows");
+            
+            /*Your code goes in here to toggle display on regardless of hover*/
+            showKeepFitWindow();
+        }
+
+        void onAppLaunchToggleOff() 
+        {
+            this.Log_DebugOnly("onAppLaunchToggleOff", "ToggleOff called - hiding windows");
+
+            /*Your code goes in here to toggle display off regardless of hover*/
+            hideKeepFitWindow();
+        }
+
+        void onAppLaunchHoverOn() 
+        {
+            this.Log_DebugOnly("onAppLaunchHoverOn", "HoverOn called - does nothing");
+
+            /*Your code goes in here to show display on*/ 
+        }
+
+        void onAppLaunchHoverOff() 
+        {
+            this.Log_DebugOnly("onAppLaunchHoverOff", "HoverOff called - does nothing");
+
+            /*Your code goes in here to show display off*/ 
+        }
+        
+        void onAppLaunchEnable() 
+        {
+            this.Log_DebugOnly("onAppLaunchEnable", "LaunchEnable called - showing window for scene");
+
+            showKeepFitWindow();
+        }
+
+        private void showKeepFitWindow()
+        {
+            /*Your code goes in here for if it gets enabled*/
+            switch (HighLogic.LoadedScene)
+            {
+                case GameScenes.FLIGHT:
+                    inFlightActiveVesselWindow.Visible = true;
+                    break;
+                case GameScenes.SPACECENTER:
+                    this.configWindow.Visible = true;
+                    break;
+                case GameScenes.EDITOR:
+                case GameScenes.SPH:
+                    this.rosterWindow.Visible = true;
+                    break;
+                case GameScenes.TRACKSTATION:
+                    this.allVesselsWindow.Visible = true;
+                    break;
+            }
+        }
+
+        void onAppLaunchDisable() 
+        {
+            this.Log_DebugOnly("onAppLaunchDisable", "LaunchDisable called - hiding windows");
+
+            hideKeepFitWindow();
+        }
+
+        private void hideKeepFitWindow()
+        {
+            /*Your code goes in here for if it gets disabled*/
+            this.configWindow.Visible = false;
+            this.allVesselsWindow.Visible = false;
+            this.inFlightActiveVesselWindow.Visible = false;
+            this.rosterWindow.Visible = false;
         }
 
         private void addController(KeepFitController controller)
@@ -214,10 +289,10 @@ namespace KeepFit
         void OnDestroy()
         {
             this.Log_DebugOnly("OnDestroy", ".");
-            if (toolbarButton != null)
+            if (appLauncherButton != null)
             {
-                toolbarButton.Destroy();
-                toolbarButton = null;
+                ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
+                appLauncherButton = null;
             }
 
             if (children != null)

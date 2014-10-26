@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Toolbar;
 using UnityEngine;
 
 namespace KeepFit
@@ -39,22 +38,23 @@ namespace KeepFit
             // first go through all the crew in the system roster - find all the ones not doing anything,
             // and get them working for a living
             {
-                CrewRoster crewRoster = HighLogic.CurrentGame.CrewRoster;
-                foreach (ProtoCrewMember crewMember in crewRoster)
+                KerbalRoster crewRoster = HighLogic.CurrentGame.CrewRoster;
+                foreach (ProtoCrewMember crewMember in crewRoster.Crew)
                 {
                     switch (crewMember.rosterStatus)
                     {
-                        case ProtoCrewMember.RosterStatus.AVAILABLE:
+                        case ProtoCrewMember.RosterStatus.Available:
                             // you're sat on your arse in the crew building, so you can get down to the gym
                             updateRosters(roster, gameConfig.roster.available, crewMember.name, ActivityLevel.EXERCISING);
                             break;
-                        case ProtoCrewMember.RosterStatus.ASSIGNED:
+                        case ProtoCrewMember.RosterStatus.Assigned:
                             // in flight - do this so we don't lose track of kerbals in the non-flight windows
                             // (until i sort out how to get all current vessels outside of flight
                             updateRosters(roster, gameConfig.roster.assigned, crewMember.name, ActivityLevel.UNKNOWN);
                             break;
-                        case ProtoCrewMember.RosterStatus.DEAD:
-                        case ProtoCrewMember.RosterStatus.MISSING:
+                        case ProtoCrewMember.RosterStatus.Dead:
+                        case ProtoCrewMember.RosterStatus.Missing:
+                        default:
                             //roster.Remove(crewMember.name);
                             break;
                     }
@@ -63,7 +63,7 @@ namespace KeepFit
 
             // then go through the vessels in the system - find out what activitylevel each crewmember gets
             // and update their stored activityLevel
-            foreach (Vessel vessel in FlightGlobals.Vessels)
+            foreach (Vessel vessel in (FlightGlobals.fetch == null ? FlightGlobals.Vessels : FlightGlobals.fetch.vessels))
             {
                 if (IsUnmanned(vessel))
                 {

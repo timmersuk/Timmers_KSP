@@ -39,9 +39,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
-    <Reference Include="Toolbar">
-      <HintPath>..\..\KSP_LIBS\Toolbar.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\KSP_LIBS\UnityEngine.dll</HintPath>
     </Reference>
@@ -85,7 +82,6 @@
     <PostBuildEvent>DEL "$(TargetDir)Assembly-CSharp.dll" 
 DEL "$(TargetDir)Assembly-CSharp.xml" 
 DEL "$(TargetDir)KeepFit.pdb" 
-DEL "$(TargetDir)Toolbar.dll" 
 DEL "$(TargetDir)UnityEngine.dll" 
 DEL "$(TargetDir)UnityEngine.xml" 
 

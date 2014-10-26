@@ -9,7 +9,7 @@ namespace KeepFit
     {
         //This version of KeepFit is compatible with KSP 0.23 - for use in CompatabilityChecker
         public static int CompatibleMajorVersion { get { return 0; } }
-        public static int CompatibleMinorVersion { get { return 23; } }
+        public static int CompatibleMinorVersion { get { return 25; } }
 
         public static string GetDllVersion(System.Type type)
         {
