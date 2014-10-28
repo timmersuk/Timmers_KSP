@@ -15,12 +15,18 @@ namespace KeepFit
         {
             this.Log_DebugOnly("Awake", ".");
 
-            if (HighLogic.LoadedScene == GameScenes.FLIGHT || 
-                HighLogic.LoadedScene == GameScenes.SPACECENTER ||
-                HighLogic.LoadedScene == GameScenes.TRACKSTATION)
+            if (shouldWeBeActive())
             {
+                this.Log_DebugOnly("Awake", "Setting up repeating task to update fitness levels");
                 InvokeRepeating("UpdateFitnessLevels", 1, 1);
             }
+        }
+
+        private Boolean shouldWeBeActive()
+        {
+            return (HighLogic.LoadedScene == GameScenes.FLIGHT ||
+                HighLogic.LoadedScene == GameScenes.SPACECENTER ||
+                HighLogic.LoadedScene == GameScenes.TRACKSTATION);
         }
 
         private void UpdateFitnessLevels()
@@ -32,7 +38,7 @@ namespace KeepFit
                 return;
             }
 
-            if (!HighLogic.LoadedSceneIsFlight)
+            if (!shouldWeBeActive())
             {
                 // too spammy
                 //this.Log_DebugOnly("UpdateFitnessLevels", "Not in flight scene - bailing");

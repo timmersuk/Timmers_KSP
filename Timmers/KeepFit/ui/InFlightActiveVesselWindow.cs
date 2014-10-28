@@ -30,7 +30,7 @@ namespace KeepFit
         {
             base.Awake();
 
-            this.Log_DebugOnly("Awakening the {0}", _ClassName);
+            this.Log_DebugOnly("Awake", ".");
 
             this.WindowCaption = "KeepFit Active Vessel";
             this.Visible = false;

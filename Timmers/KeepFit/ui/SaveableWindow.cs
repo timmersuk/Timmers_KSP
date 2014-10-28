@@ -99,7 +99,7 @@ namespace KeepFit
             Config config = new Config(GetConfigNodeName());
             config.WindowRectStore.Store(WindowRect);
             config.Save(configNode);
-            this.Log_DebugOnly("Load", "Saved config for window[{0}] WindowRect[{1}] to configNode[{2}]", WindowCaption, WindowRect, configNode);
+            this.Log_DebugOnly("Load", "Saved config for window[{0}] WindowRect[{1}]", WindowCaption, WindowRect);
         }
 
         private void HandleWindowEvents(Rect resizeRect)

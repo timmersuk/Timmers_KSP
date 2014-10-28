@@ -97,7 +97,7 @@ public abstract class ConfigNodeStorage : IPersistenceLoad, IPersistenceSave
             ConfigNode cnTemp = new ConfigNode(configNodeName);
             ConfigNode cnSaveWrapper = ConfigNode.CreateConfigFromObject(this, cnTemp);
 
-            KeepFit.Logging.Log_DebugOnly(this, "Save", "saving node [{0}]", cnSaveWrapper);
+            KeepFit.Logging.Log_DebugOnly(this, "Save", "saving");
 
             parent.AddNode(cnSaveWrapper);
 

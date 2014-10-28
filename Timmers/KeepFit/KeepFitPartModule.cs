@@ -45,7 +45,7 @@ namespace KeepFit
         /// </summary>
         public override void OnStart(StartState state)
         {
-            print("KeepFitPartModule::OnStart");
+            print(":OnStart");
 
             base.OnStart(state);
          

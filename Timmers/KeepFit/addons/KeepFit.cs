@@ -110,6 +110,7 @@ namespace KeepFit
 
             if (rosterWindow == null)
             {
+                this.Log_DebugOnly("OnAwake", "Constructing rosterWindow");
                 rosterWindow = gameObject.AddComponent<RosterWindow>();
                 rosterWindow.gameConfig = gameConfig;
                 rosterWindow.configWindow = configWindow;
@@ -117,12 +118,14 @@ namespace KeepFit
 
             if (allVesselsWindow == null)
             {
+                this.Log_DebugOnly("OnAwake", "Constructing allVesselsWindow");
                 allVesselsWindow = gameObject.AddComponent<AllVesselsWindow>();
                 allVesselsWindow.gameConfig = gameConfig;
             }
 
             if (inFlightActiveVesselWindow == null)
             {
+                this.Log_DebugOnly("OnAwake", "Constructing inFlightActiveVesselWindow");
                 inFlightActiveVesselWindow = gameObject.AddComponent<InFlightActiveVesselWindow>();
                 inFlightActiveVesselWindow.gameConfig = gameConfig;
                 inFlightActiveVesselWindow.configWindow = configWindow;
@@ -159,16 +162,17 @@ namespace KeepFit
             this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewRosterController");
             addController(gameObject.AddComponent<KeepFitCrewRosterController>());
 
-            this.Log_DebugOnly("OnAwake", "Adding KeepFitController");
             if (HighLogic.LoadedScene == GameScenes.FLIGHT ||
                 HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
                 HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
+                this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewFitnessController");
                 addController(gameObject.AddComponent<KeepFitCrewFitnessController>());
             }
 
             if (HighLogic.LoadedScene == GameScenes.FLIGHT)
             {
+                this.Log_DebugOnly("OnAwake", "Adding KeepFitGeeEffectsController");
                 addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
             }
         }
@@ -219,7 +223,7 @@ namespace KeepFit
                     inFlightActiveVesselWindow.Visible = true;
                     break;
                 case GameScenes.SPACECENTER:
-                    this.configWindow.Visible = true;
+                    this.rosterWindow.Visible = true;
                     break;
                 case GameScenes.EDITOR:
                 case GameScenes.SPH:
@@ -257,7 +261,7 @@ namespace KeepFit
         {
             base.OnLoad(gameNode);
 
-            this.Log_DebugOnly("OnLoad: ", "{0}", gameNode.ToString());
+            //this.Log_DebugOnly("OnLoad: ", "{0}", gameNode.ToString());
             configWindow.Load(gameNode);
             this.Log_DebugOnly("OnLoad: ", "Loaded configWindow");
 
@@ -283,7 +287,8 @@ namespace KeepFit
             }
             gameConfig.Save(gameNode);
 
-            this.Log_DebugOnly("OnSave", gameNode.ToString());
+            this.Log_DebugOnly("OnSave", "Saved keepfit persistence data");
+//            this.Log_DebugOnly("OnSave", gameNode.ToString());
         }
 
         void OnDestroy()

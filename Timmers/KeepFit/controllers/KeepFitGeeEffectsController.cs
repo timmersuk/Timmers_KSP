@@ -31,10 +31,10 @@ namespace KeepFit
                 return;
             }
 
-            if (!HighLogic.LoadedSceneIsFlight)
+            if (HighLogic.LoadedSceneIsEditor)
             {
                 // too spammy
-                //this.Log_DebugOnly("FixedUpdate", "Not in flight scene - bailing");
+                this.Log_DebugOnly("FixedUpdate", "Not in flight scene - bailing");
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace KeepFit
                     catch (KeyNotFoundException)
                     {
                         // ignore, we'll pick them up later
-                        this.Log_Release("FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] crewmember [{2}] not in the keepfit roster yet", vessel.GetName(), geeLoading, crewMember.name);
+                        this.Log_Release("KeepFitGeeEffectsController:FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] crewmember [{2}] not in the keepfit roster yet", vessel.GetName(), geeLoading, crewMember.name);
                     }
                 }
             }
