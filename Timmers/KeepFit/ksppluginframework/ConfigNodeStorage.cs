@@ -79,7 +79,7 @@ public abstract class ConfigNodeStorage : IPersistenceLoad, IPersistenceSave
             return false;
         }
 
-        KeepFit.Logging.Log_DebugOnly(this, "Load", "cnUnwrapped[{0}]", cnUnwrapped);
+        //KeepFit.Logging.Log_DebugOnly(this, "Load", "cnUnwrapped[{0}]", cnUnwrapped);
 
         //plug it in to the object
         bool succeeded = ConfigNode.LoadObjectFromConfig(this, cnUnwrapped);

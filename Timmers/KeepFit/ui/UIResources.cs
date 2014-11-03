@@ -37,6 +37,8 @@ namespace KeepFit
         public GUIStyle styleTextCenterGreen { get; private set; }
 
         public GUIStyle styleBarText { get; private set; }
+        public GUIStyle styleBarTextRed { get; private set; }
+        public GUIStyle styleBarTextGreen { get; private set; }
         public GUIStyle styleBarRateText { get; private set; }
 
         public GUIStyle styleStageText { get; private set; }
@@ -99,20 +101,20 @@ namespace KeepFit
             texIconsActivityLevels = LoadActivityIcons();
             this.Log_DebugOnly("LoadTexture", "KeepFit Activity Level Icons Loaded: {0}", texIconsActivityLevels.Count.ToString());
 
-            this.texPanel = LoadImageFromGameDB("img_PanelBack.png");
-            this.texBarOrange = LoadImageFromGameDB("img_BarOrange.png");
-            this.texBarOrange_Back = LoadImageFromGameDB("img_BarOrange_Back.png");
-            this.texBarRed = LoadImageFromGameDB("img_BarRed.png");
-            this.texBarRed_Back = LoadImageFromGameDB("img_BarRed_Back.png");
-            this.texBarGreen = LoadImageFromGameDB("img_BarGreen.png");
-            this.texBarGreen_Back = LoadImageFromGameDB("img_BarGreen_Back.png");
+            this.texPanel = LoadImageFromGameDB("img_PanelBack");
+            this.texBarOrange = LoadImageFromGameDB("img_BarOrange");
+            this.texBarOrange_Back = LoadImageFromGameDB("img_BarOrange_Back");
+            this.texBarRed = LoadImageFromGameDB("img_BarRed");
+            this.texBarRed_Back = LoadImageFromGameDB("img_BarRed_Back");
+            this.texBarGreen = LoadImageFromGameDB("img_BarGreen");
+            this.texBarGreen_Back = LoadImageFromGameDB("img_BarGreen_Back");
 
-            this.btnChevronUp = LoadImageFromGameDB("img_buttonChevronUp.png");
-            this.btnChevronDown = LoadImageFromGameDB("img_buttonChevronDown.png");
+            this.btnChevronUp = LoadImageFromGameDB("img_buttonChevronUp");
+            this.btnChevronDown = LoadImageFromGameDB("img_buttonChevronDown");
 
-            this.btnSettingsAttention = LoadImageFromGameDB("img_buttonSettingsAttention.png");
+            this.btnSettingsAttention = LoadImageFromGameDB("img_buttonSettingsAttention");
 
-            this.txtTooltipBackground = LoadImageFromGameDB("txt_TooltipBackground.png");
+            this.txtTooltipBackground = LoadImageFromGameDB("txt_TooltipBackground");
         }
 
         private Dictionary<ActivityLevel, Texture2D> LoadActivityIcons()
@@ -122,7 +124,7 @@ namespace KeepFit
 
             foreach (ActivityLevel activityLevel in Enum.GetValues(typeof(ActivityLevel)))
             {
-                String iconName = "activityLevel_" + activityLevel.ToString().ToLower() + ".png";
+                String iconName = "activityLevel_" + activityLevel.ToString().ToLower();
 
                 try
                 { 
@@ -140,88 +142,6 @@ namespace KeepFit
             return dictReturn;
         }
 
-        private Dictionary<String, Texture2D> LoadIconDictionary(String IconFolderName)
-        {
-            Dictionary<String, Texture2D> dictReturn = new Dictionary<string, Texture2D>();
-            Texture2D texLoading;
-
-            String strIconPath = string.Format("{0}/{1}", PathTextures, IconFolderName);
-            String strIconDBPath = string.Format("{0}/{1}", DBPathTextures, IconFolderName);
-
-            this.Log_DebugOnly("LoadIconDictionary", "{0}--{1}",strIconPath,strIconDBPath);
-
-            if (Directory.Exists(strIconPath))
-            {
-                FileInfo[] fileIcons = new System.IO.DirectoryInfo(strIconPath).GetFiles("*.png");
-                foreach (FileInfo fileIcon in fileIcons)
-                {
-                    //this.Log_DebugOnly("LoadTexture", "{0}", fileIcon.FullName);
-                    try
-                    {
-                        texLoading = LoadImageFromGameDB(fileIcon.Name, strIconDBPath);
-                        if (texLoading != null)
-                        {
-                            dictReturn.Add(fileIcon.Name.ToLower().Replace(".png", ""), texLoading);
-                        }
-                        //texLoading = GameDatabase.Instance.GetTexture(string.Format("{0}/{1}", strIconDBPath, fileIcon.Name.ToLower().Replace(".png", "")), false);
-                        //dictReturn.Add(fileIcon.Name.ToLower().Replace(".png", ""), texLoading);
-                    }
-                    catch (Exception)
-                    {
-                        this.Log_DebugOnly("LoadTexture", "Unable to load Texture from GameDB:{0}", strIconPath);
-                    }
-                    //texLoading; // = new Texture2D(32, 16, TextureFormat.ARGB32, false);
-                    //if (LoadImageIntoTexture2(ref texLoading, fileIcon.Name, strIconPath))
-                    //    dictReturn.Add(fileIcon.Name.ToLower().Replace(".png", ""), texLoading);
-                }
-            }
-            return dictReturn;
-        }
-
-        private Dictionary<String, Texture2D> LoadIconDictionary_Defs()
-        {
-            Dictionary<String, Texture2D> dictReturn = new Dictionary<string, Texture2D>();
-            Texture2D texLoading;
-
-            ConfigNode[] cns = GameDatabase.Instance.GetConfigNodes("RESOURCE_DEFINITION");
-            this.Log_DebugOnly("LoadIconDictionary_Defs", cns.Length.ToString());
-            foreach (ConfigNode cn in cns)
-            {
-                if (cn.HasValue("name"))
-                {
-                    if (cn.HasValue("ksparpicon"))
-                    {
-                        try
-                        {
-                            texLoading = GameDatabase.Instance.GetTexture(cn.GetValue("ksparpicon"), false);
-                            if ((texLoading.width > 32) || (texLoading.height > 16))
-                            {
-                                this.Log_DebugOnly("LoadIconDictionary_Defs", "Texture Too Big (32x16 is limit) - w:{0} h:{1}", texLoading.width, texLoading.height);
-                            }
-                            else
-                            {
-                                dictReturn.Add(cn.GetValue("name").ToLower(), texLoading);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            this.Log_DebugOnly("LoadIconDictionary_Defs", "Unable to load texture {0}-{1}", cn.GetValue("name"), cn.GetValue("ksparpicon"));
-                        }
-                    }
-                }
-            }
-
-            return dictReturn;
-        }
-
-        //public static Byte[] LoadFileToArray(String Filename)
-        //{
-        //    Byte[] arrBytes;
-
-        //    arrBytes = KSP.IO.File.ReadAllBytes<KSPAlternateResourcePanel>(Filename);
-
-        //    return arrBytes;
-        //}
         public static Byte[] LoadFileToArray2(String Filename)
         {
             Byte[] arrBytes;
@@ -231,52 +151,11 @@ namespace KeepFit
             return arrBytes;
         }
 
-        //public static void SaveFileFromArray(Byte[] data, String Filename)
-        //{
-        //    KSP.IO.File.WriteAllBytes<KSPAlternateResourcePanel>(data, Filename);
-        //}
-
-
-        //public static Boolean LoadImageIntoTexture(ref Texture2D tex, String FileName)
-        //{
-        //    Boolean blnReturn = false;
-        //    try
-        //    {
-        //        //DebugLogFormatted("Loading {0}", FileName);
-        //        tex.LoadImage(LoadFileToArray(FileName));
-        //        blnReturn = true;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        DebugLogFormatted("Failed to load (are you missing a file):{0}", FileName);
-        //    }
-        //    return blnReturn;
-        //}
-
-        public Boolean LoadImageIntoTexture2(ref Texture2D tex, String FileName, String FolderPath = "")
-        {
-            //DebugLogFormatted("{0},{1}",FileName, FolderPath);
-            Boolean blnReturn = false;
-            try
-            {
-                if (FolderPath == "") FolderPath = PathPluginData;
-                //DebugLogFormatted("Loading {0}", FileName);
-                tex.LoadImage(LoadFileToArray2(string.Format("{0}/{1}", FolderPath, FileName)));
-                blnReturn = true;
-            }
-            catch (Exception)
-            {
-                this.Error_Release("LoadImageIntoTexture2", "Failed to load (are you missing a file):{0}", FileName);
-            }
-            return blnReturn;
-        }
-
         public Texture2D  LoadImageFromGameDB(String FileName, String FolderPath = "")
         {
             this.Log_DebugOnly("LoadImageFromGameDB", "{0},{1}",FileName, FolderPath);
             try
             {
-                if (FileName.ToLower().EndsWith(".png")) FileName = FileName.Substring(0, FileName.Length - 4);
                 if (FolderPath == "") FolderPath = DBPathTextures;
                 this.Log_DebugOnly("LoadImageFromGameDB", "Loading {0}", String.Format("{0}/{1}", FolderPath, FileName));
                 Texture2D tex = GameDatabase.Instance.GetTexture(String.Format("{0}/{1}", FolderPath, FileName), false);
@@ -372,6 +251,20 @@ namespace KeepFit
             styleBarText.normal.textColor = new Color(255, 255, 255, 0.8f);
             styleBarText.wordWrap = false;
             this.Log_DebugOnly("InitStyles", "styleBarText done");
+
+            styleBarTextRed = new GUIStyle(SkinsLibrary.CurrentSkin.label);
+            styleBarTextRed.fontSize = 12;
+            styleBarTextRed.alignment = TextAnchor.MiddleCenter;
+            styleBarTextRed.normal.textColor = new Color(255, 0, 0, 0.8f);
+            styleBarTextRed.wordWrap = false;
+            this.Log_DebugOnly("InitStyles", "styleBarTextRed done");
+
+            styleBarTextGreen = new GUIStyle(SkinsLibrary.CurrentSkin.label);
+            styleBarTextGreen.fontSize = 12;
+            styleBarTextGreen.alignment = TextAnchor.MiddleCenter;
+            styleBarTextGreen.normal.textColor = new Color(0, 255, 0, 0.8f);
+            styleBarTextGreen.wordWrap = false;
+            this.Log_DebugOnly("InitStyles", "styleBarTextRed done");
 
             styleBarRateText = new GUIStyle(styleBarText);
             styleBarRateText.alignment = TextAnchor.MiddleRight;

@@ -36,6 +36,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\KSP_LIBS\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="CrewFilesInterface">
+      <HintPath>..\..\KSP_LIBS\CrewFilesInterface.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -52,6 +55,7 @@
     <Compile Include="ui\ConfigWindow.cs" />
     <Compile Include="ui\AllVesselsWindow .cs" />
     <Compile Include="ui\InFlightActiveVesselWindow.cs" />
+    <Compile Include="ui\LogWindow.cs" />
     <Compile Include="ui\RosterWindow.cs" />
     <Compile Include="ui\SaveableWindow.cs" />
     <Compile Include="ui\UIResources.cs" />

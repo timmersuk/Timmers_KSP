@@ -133,7 +133,7 @@ namespace KeepFit
 
                 // first line - crewmember name
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(crewMember.Name, uiResources.styleCrewName);
+                GUILayout.Label(crewMember.Name + "(" + (crewMember.loaded ? "loaded" : "generated") + ")", uiResources.styleCrewName);
                 GUILayout.FlexibleSpace();
                 if (!showAllCrewExpanded && DrawChevron(expanded))
                 {

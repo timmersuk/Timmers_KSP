@@ -59,12 +59,15 @@ namespace KeepFit
 
     class KeepFitScenarioModule : ScenarioModule
     {
-        private readonly List<KeepFitController> children = new List<KeepFitController>();
-        
         /// <summary>
         /// AppLauncher button
         /// </summary>
         private ApplicationLauncherButton appLauncherButton;
+
+        /// <summary>
+        /// UI window for displaying status + logging from KeepFit
+        /// </summary>
+        private LogWindow logWindow;
 
         /// <summary>
         /// UI window for editing the config
@@ -83,7 +86,9 @@ namespace KeepFit
 
         private AllVesselsWindow allVesselsWindow;
 
-
+        private KeepFitCrewFitnessController crewFitnessController;
+        private KeepFitCrewRosterController crewRosterController;
+        private KeepFitGeeEffectsController geeEffectsController;
 
         /// <summary>
         /// Main copy of the per-game config
@@ -101,6 +106,12 @@ namespace KeepFit
         {
             this.Log_DebugOnly("OnAwake", "Scene[{0}]", HighLogic.LoadedScene);
             base.OnAwake();
+
+            if (logWindow == null)
+            {
+                logWindow = gameObject.AddComponent<LogWindow>();
+                logWindow.Init(this);
+            }
 
             if (configWindow == null)
             {
@@ -159,22 +170,41 @@ namespace KeepFit
                                                                toolbarButtonTexture);
             }
 
+
             this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewRosterController");
-            addController(gameObject.AddComponent<KeepFitCrewRosterController>());
+            crewRosterController = gameObject.AddComponent<KeepFitCrewRosterController>();
+            crewRosterController.Init(gameConfig);
 
             if (HighLogic.LoadedScene == GameScenes.FLIGHT ||
                 HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
                 HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewFitnessController");
-                addController(gameObject.AddComponent<KeepFitCrewFitnessController>());
+                crewFitnessController = gameObject.AddComponent<KeepFitCrewFitnessController>();
+                crewFitnessController.Init(gameConfig);
             }
 
             if (HighLogic.LoadedScene == GameScenes.FLIGHT)
             {
                 this.Log_DebugOnly("OnAwake", "Adding KeepFitGeeEffectsController");
-                addController(gameObject.AddComponent<KeepFitGeeEffectsController>());
+                this.geeEffectsController = gameObject.AddComponent<KeepFitGeeEffectsController>();
+                this.geeEffectsController.Init(gameConfig);
             }
+        }
+
+        public bool isCrewFitnessControllerActive() 
+        {
+            return (this.crewFitnessController != null);
+        }
+
+        public bool isCrewRosterControllerActive()
+        {
+            return (this.crewRosterController != null);
+        }
+
+        public bool isGeeEffectsControllerActive()
+        {
+            return (this.geeEffectsController != null);
         }
 
         void onAppLaunchToggleOn() 
@@ -216,6 +246,8 @@ namespace KeepFit
 
         private void showKeepFitWindow()
         {
+            logWindow.Visible = true;
+
             /*Your code goes in here for if it gets enabled*/
             switch (HighLogic.LoadedScene)
             {
@@ -245,16 +277,11 @@ namespace KeepFit
         private void hideKeepFitWindow()
         {
             /*Your code goes in here for if it gets disabled*/
+            this.logWindow.Visible = false;
             this.configWindow.Visible = false;
             this.allVesselsWindow.Visible = false;
             this.inFlightActiveVesselWindow.Visible = false;
             this.rosterWindow.Visible = false;
-        }
-
-        private void addController(KeepFitController controller)
-        {
-            controller.SetGameConfig(gameConfig);
-            children.Add(controller);
         }
 
         public override void OnLoad(ConfigNode gameNode)
@@ -300,13 +327,22 @@ namespace KeepFit
                 appLauncherButton = null;
             }
 
-            if (children != null)
+            if (this.crewFitnessController != null)
             {
-                foreach (Component c in children)
-                {
-                    Destroy(c);
-                }
-                children.Clear();
+                Destroy(crewFitnessController);
+                crewFitnessController = null;
+            }
+
+            if (this.crewRosterController != null)
+            {
+                Destroy(crewRosterController);
+                crewRosterController = null;
+            }
+
+            if (this.geeEffectsController != null)
+            {
+                Destroy(geeEffectsController);
+                geeEffectsController = null;
             }
         }
     }

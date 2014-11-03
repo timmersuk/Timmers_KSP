@@ -18,7 +18,7 @@ namespace KeepFit
             this.Log_DebugOnly("ctor", ".");
         }
 
-        internal void SetGameConfig(GameConfig gameConfig)
+        internal void Init(GameConfig gameConfig)
         {
             this.Log_DebugOnly("SetGameConfig", ".");
             this.gameConfig = gameConfig;

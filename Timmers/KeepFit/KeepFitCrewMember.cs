@@ -67,6 +67,8 @@ namespace KeepFit
     /// </summary>
     public class KeepFitCrewMember : ConfigNodeStorage
     {
+        internal bool loaded;
+
         [Persistent] internal String Name;
         //[Persistent] internal KeepFitVesselRecord vessel;
         [Persistent] internal ActivityLevel activityLevel;
@@ -95,6 +97,8 @@ namespace KeepFit
 
         public KeepFitCrewMember()
         {
+            loaded = true;
+
             foreach (ActivityLevel level in Enum.GetValues(typeof(ActivityLevel)))
             {
                 times[level] = 0;
@@ -103,9 +107,10 @@ namespace KeepFit
             geeAccums = GetDefaultGeeAccums();
         }
 
-        public KeepFitCrewMember(string name)
+        public KeepFitCrewMember(string name, bool loaded)
             : this()
         {
+            loaded = false;
             Name = name;
         }
 

@@ -164,7 +164,7 @@ namespace KeepFit
                 this.Log_DebugOnly("updateRosters", "crewMember[{0}] wasn't in the old roster", name);
 
                 // not in the old roster - add him to the new one ... 
-                keepFitCrewMember = new KeepFitCrewMember(name);
+                keepFitCrewMember = new KeepFitCrewMember(name, false);
                 keepFitCrewMember.fitnessLevel = gameConfig.initialFitnessLevel;
                 roster[name] = keepFitCrewMember;
             }
