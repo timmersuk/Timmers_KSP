@@ -48,24 +48,33 @@ namespace KeepFit
             }
         }
 
-        public bool Resizable { get; set; }
+        private readonly string configNodeName;
 
         private GUIStyle closeButtonStyle;
         private GUIStyle resizeStyle;
         private GUIContent resizeContent;
         private bool mouseDown;
 
+        private readonly bool resizeable;
+        private readonly bool showCloseButton;
+
+        protected SaveableWindow(bool resizeable, bool showCloseButton, string configNodeName)
+        {
+            this.resizeable = resizeable;
+            this.showCloseButton = showCloseButton;
+            this.configNodeName = configNodeName;
+        }
 
         internal override void DrawWindow(int id)
         {
             ConfigureStyles();
 
-            if (GUI.Button(new Rect(WindowRect.width - 24, 4, 20, 20), "X"))
+            if (showCloseButton && GUI.Button(new Rect(WindowRect.width - 24, 4, 20, 20), "X"))
             {
                 Visible = false;
             }
 
-            if (Resizable)
+            if (resizeable)
             {
                 var resizeRect = new Rect(WindowRect.width - 16, WindowRect.height - 16, 16, 16);
                 GUI.Label(resizeRect, resizeContent, resizeStyle);
@@ -74,15 +83,10 @@ namespace KeepFit
             }
         }
 
-        protected string GetConfigNodeName()
-        {
-            return WindowCaption.Replace(" ", "") + "Window";
-        }
-
         public void Load(ConfigNode configNode)
         {
-            this.Log_DebugOnly("Load", "Loading config for window[{0}]", WindowCaption);
-            Config config = new Config(GetConfigNodeName());
+            this.Log_DebugOnly("Load", "Loading config for window[{0}]", configNodeName);
+            Config config = new Config(configNodeName);
             if (config.Load(configNode, true) &&
                 config.WindowRectStore != null &&
                 config.WindowRectStore.height != 0 &&
@@ -90,16 +94,16 @@ namespace KeepFit
             {
                 WindowRect = config.WindowRectStore.Restore();
             }
-            this.Log_DebugOnly("Load", "Loaded config for window[{0}] WindowRect[{1}]", WindowCaption, WindowRect);
+            this.Log_DebugOnly("Load", "Loaded config for window[{0}] WindowRect[{1}]", configNodeName, WindowRect);
         }
 
         public virtual void Save(ConfigNode configNode)
         {
-            this.Log_DebugOnly("Save", "Saving config for window[{0}]", WindowCaption);
-            Config config = new Config(GetConfigNodeName());
+            this.Log_DebugOnly("Save", "Saving config for window[{0}]", configNodeName);
+            Config config = new Config(configNodeName);
             config.WindowRectStore.Store(WindowRect);
             config.Save(configNode);
-            this.Log_DebugOnly("Load", "Saved config for window[{0}] WindowRect[{1}]", WindowCaption, WindowRect);
+            this.Log_DebugOnly("Load", "Saved config for window[{0}] WindowRect[{1}]", configNodeName, WindowRect);
         }
 
         private void HandleWindowEvents(Rect resizeRect)

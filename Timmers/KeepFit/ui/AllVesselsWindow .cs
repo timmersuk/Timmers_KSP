@@ -17,6 +17,7 @@ namespace KeepFit
         /// Class Initializer
         /// </summary>
         public AllVesselsWindow()
+            : base(true, true, "allvessels")
         {
 
         }
@@ -34,7 +35,6 @@ namespace KeepFit
             this.WindowCaption = "KeepFit All Vessels";
             this.Visible = false;
             this.DragEnabled = true;
-            this.Resizable = true;
             this.TooltipsEnabled = true;
 
             this.WindowRect = new Rect(Screen.width - 298, 100, 299, 200); ;
@@ -42,7 +42,14 @@ namespace KeepFit
 
         protected override void FillWindow(int WindowHandle)
         {
-            if (gameConfig == null || gameConfig.roster == null || gameConfig.roster.vessels == null)
+            GameConfig gameConfig = scenarioModule.GetGameConfig();
+            if (!gameConfig.enabled)
+            {
+                GUILayout.Label(new GUIContent("DISABLED"), uiResources.styleBarTextRed);
+                return;
+            }
+
+            if (gameConfig.roster == null || gameConfig.roster.vessels == null)
             {
                 return;
             }

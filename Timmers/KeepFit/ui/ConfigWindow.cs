@@ -8,9 +8,10 @@ namespace KeepFit
 {
     class ConfigWindow : SaveableWindow
     {
-        internal GameConfig config { get; set; }
+        KeepFitScenarioModule scenarioModule;
 
         public ConfigWindow()
+            : base(true, true, "config")
         {
             this.WindowCaption = "KeepFit Config";
             this.Visible = false;
@@ -19,9 +20,16 @@ namespace KeepFit
             this.WindowRect = new Rect(0, 0, 400, 300);
         }
 
+        internal void Init(KeepFitScenarioModule scenarioModule)
+        {
+            this.scenarioModule = scenarioModule;
+        }
+
         internal override void DrawWindow(int id)
         {
             base.DrawWindow(id);
+
+            GameConfig config = scenarioModule.GetGameConfig();
 
             GUILayout.BeginVertical();
 

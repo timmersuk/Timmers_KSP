@@ -64,27 +64,23 @@ namespace KeepFit
         /// </summary>
         private ApplicationLauncherButton appLauncherButton;
 
-        /// <summary>
-        /// UI window for displaying status + logging from KeepFit
-        /// </summary>
+        private MainWindow mainWindow;
+        private RosterWindow rosterWindow;
+        private AllVesselsWindow allVesselsWindow;
         private LogWindow logWindow;
-
-        /// <summary>
-        /// UI window for editing the config
-        /// </summary>
         private ConfigWindow configWindow;
 
         /// <summary>
         /// UI window for displaying the current crew roster
         /// </summary>
-        private RosterWindow rosterWindow;
+
 
         /// <summary>
         /// UI Window for in flight use for displaying the active vessel crew's fitness level
         /// </summary>
-        private InFlightActiveVesselWindow inFlightActiveVesselWindow;
 
-        private AllVesselsWindow allVesselsWindow;
+
+
 
         private KeepFitCrewFitnessController crewFitnessController;
         private KeepFitCrewRosterController crewRosterController;
@@ -107,6 +103,12 @@ namespace KeepFit
             this.Log_DebugOnly("OnAwake", "Scene[{0}]", HighLogic.LoadedScene);
             base.OnAwake();
 
+            if (mainWindow == null)
+            {
+                mainWindow = gameObject.AddComponent<MainWindow>();
+                mainWindow.Init(this);
+            }
+
             if (logWindow == null)
             {
                 logWindow = gameObject.AddComponent<LogWindow>();
@@ -116,37 +118,27 @@ namespace KeepFit
             if (configWindow == null)
             {
                 configWindow = gameObject.AddComponent<ConfigWindow>();
-                configWindow.config = gameConfig;
+                configWindow.Init(this);
             }
 
             if (rosterWindow == null)
             {
                 this.Log_DebugOnly("OnAwake", "Constructing rosterWindow");
                 rosterWindow = gameObject.AddComponent<RosterWindow>();
-                rosterWindow.gameConfig = gameConfig;
-                rosterWindow.configWindow = configWindow;
+                rosterWindow.Init(this);
             }
 
             if (allVesselsWindow == null)
             {
                 this.Log_DebugOnly("OnAwake", "Constructing allVesselsWindow");
                 allVesselsWindow = gameObject.AddComponent<AllVesselsWindow>();
-                allVesselsWindow.gameConfig = gameConfig;
+                allVesselsWindow.Init(this);
             }
 
-            if (inFlightActiveVesselWindow == null)
-            {
-                this.Log_DebugOnly("OnAwake", "Constructing inFlightActiveVesselWindow");
-                inFlightActiveVesselWindow = gameObject.AddComponent<InFlightActiveVesselWindow>();
-                inFlightActiveVesselWindow.gameConfig = gameConfig;
-                inFlightActiveVesselWindow.configWindow = configWindow;
-                inFlightActiveVesselWindow.allVesselsWindow = allVesselsWindow;
-            }
 
             if (appLauncherButton != null)
             {
                 this.Log_DebugOnly("OnAwake", "AppLauncher button already here");
-            
             }
             else
             {
@@ -168,6 +160,8 @@ namespace KeepFit
                                                                onAppLaunchDisable,
                                                                scenes,
                                                                toolbarButtonTexture);
+                ApplicationLauncher.Instance.EnableMutuallyExclusive(appLauncherButton);
+                ApplicationLauncher.Instance.AddOnRepositionCallback(onAppLauncherReposition);
             }
 
 
@@ -192,6 +186,16 @@ namespace KeepFit
             }
         }
 
+        public GameConfig GetGameConfig()
+        {
+            return gameConfig;
+        }
+
+        public bool isKeepFitEnabled()
+        {
+            return gameConfig.enabled;
+        }
+
         public bool isCrewFitnessControllerActive() 
         {
             return (this.crewFitnessController != null);
@@ -207,6 +211,31 @@ namespace KeepFit
             return (this.geeEffectsController != null);
         }
 
+        public void ShowLog()
+        {
+            this.logWindow.Show();
+        }
+
+        public void ShowRoster()
+        {
+            this.rosterWindow.Show();
+        }
+
+        public void ShowVessels()
+        {
+            this.allVesselsWindow.Show();
+        }
+
+        public void ShowSettings()
+        {
+            this.configWindow.Visible = true;
+        }
+
+        void onAppLauncherReposition()
+        {
+
+        }
+
         void onAppLaunchToggleOn() 
         {
             this.Log_DebugOnly("onAppLaunchToggleOn", "ToggleOn called - showing windows");
@@ -220,21 +249,23 @@ namespace KeepFit
             this.Log_DebugOnly("onAppLaunchToggleOff", "ToggleOff called - hiding windows");
 
             /*Your code goes in here to toggle display off regardless of hover*/
-            hideKeepFitWindow();
+            hideKeepFitWindows();
         }
 
         void onAppLaunchHoverOn() 
         {
             this.Log_DebugOnly("onAppLaunchHoverOn", "HoverOn called - does nothing");
 
-            /*Your code goes in here to show display on*/ 
+            /*Your code goes in here to show display on*/
+            showKeepFitWindow();
         }
 
         void onAppLaunchHoverOff() 
         {
             this.Log_DebugOnly("onAppLaunchHoverOff", "HoverOff called - does nothing");
 
-            /*Your code goes in here to show display off*/ 
+            /*Your code goes in here to show display off*/
+            hideKeepFitWindows();
         }
         
         void onAppLaunchEnable() 
@@ -246,41 +277,24 @@ namespace KeepFit
 
         private void showKeepFitWindow()
         {
-            logWindow.Visible = true;
-
             /*Your code goes in here for if it gets enabled*/
-            switch (HighLogic.LoadedScene)
-            {
-                case GameScenes.FLIGHT:
-                    inFlightActiveVesselWindow.Visible = true;
-                    break;
-                case GameScenes.SPACECENTER:
-                    this.rosterWindow.Visible = true;
-                    break;
-                case GameScenes.EDITOR:
-                case GameScenes.SPH:
-                    this.rosterWindow.Visible = true;
-                    break;
-                case GameScenes.TRACKSTATION:
-                    this.allVesselsWindow.Visible = true;
-                    break;
-            }
+            mainWindow.Visible = true;
         }
 
         void onAppLaunchDisable() 
         {
             this.Log_DebugOnly("onAppLaunchDisable", "LaunchDisable called - hiding windows");
 
-            hideKeepFitWindow();
+            hideKeepFitWindows();
         }
 
-        private void hideKeepFitWindow()
+        private void hideKeepFitWindows()
         {
             /*Your code goes in here for if it gets disabled*/
+            this.mainWindow.Visible = false;
             this.logWindow.Visible = false;
             this.configWindow.Visible = false;
             this.allVesselsWindow.Visible = false;
-            this.inFlightActiveVesselWindow.Visible = false;
             this.rosterWindow.Visible = false;
         }
 
@@ -288,7 +302,12 @@ namespace KeepFit
         {
             base.OnLoad(gameNode);
 
-            //this.Log_DebugOnly("OnLoad: ", "{0}", gameNode.ToString());
+            mainWindow.Load(gameNode);
+            this.Log_DebugOnly("OnLoad: ", "Loaded mainWindow");
+            
+            logWindow.Load(gameNode);
+            this.Log_DebugOnly("OnLoad: ", "Loaded logWindow");
+
             configWindow.Load(gameNode);
             this.Log_DebugOnly("OnLoad: ", "Loaded configWindow");
 
@@ -323,6 +342,7 @@ namespace KeepFit
             this.Log_DebugOnly("OnDestroy", ".");
             if (appLauncherButton != null)
             {
+                ApplicationLauncher.Instance.DisableMutuallyExclusive(appLauncherButton);
                 ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
                 appLauncherButton = null;
             }

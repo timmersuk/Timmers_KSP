@@ -13,20 +13,43 @@ namespace KeepFit
         //GlobalSettings
         internal static int intLineHeight = 20;
 
-        
+        internal KeepFitScenarioModule scenarioModule;
+
         protected UIResources uiResources = new UIResources();
-        internal GameConfig gameConfig { get; set; }
         
         protected Dictionary<string, bool> expandedCrew = new Dictionary<string, bool>();
         
         /// <summary>
         /// Class Initializer
         /// </summary>
-        public KeepFitInfoWindow()
+        public KeepFitInfoWindow(bool resizeable, bool showCloseButton, string configNodeName)
+            : base(resizeable, showCloseButton, configNodeName)
         {
 
         }
 
+        internal void Init(KeepFitScenarioModule scenarioModule)
+        {
+            this.scenarioModule = scenarioModule;
+        }
+
+
+        internal void Show()
+        {
+            this.Visible = true;
+        }
+
+        internal void Show(float x, float y)
+        {
+            this.WindowRect.x = x;
+            this.WindowRect.y = y;
+            this.Visible = true;
+        }
+
+        internal void hide()
+        {
+            this.Visible = false;
+        }
 
         /// <summary>
         /// Awake Event - when the DLL is loaded 
@@ -83,7 +106,7 @@ namespace KeepFit
         internal void DrawVesselInfo(int windowHandle, KeepFitVesselRecord vessel, bool showExpandToggle, ref bool expanded, bool showAllCrewExpanded)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(vessel.name);
+            GUILayout.Label(vessel.name, uiResources.styleBarText);
             Texture2D texActivityLevel;
             uiResources.texIconsActivityLevels.TryGetValue(vessel.activityLevel, out texActivityLevel);
             if (texActivityLevel == null)
@@ -118,6 +141,8 @@ namespace KeepFit
 
         protected void DrawCrew(int windowHandle, ICollection<KeepFitCrewMember> crew, bool showGeeLoadings, bool showAllCrewExpanded)
         {
+            GameConfig gameConfig = scenarioModule.GetGameConfig();
+
             GUILayout.Space(4);
             foreach (KeepFitCrewMember crewMember in crew)
             {

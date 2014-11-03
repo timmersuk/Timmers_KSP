@@ -8,42 +8,44 @@ namespace KeepFit
 {
     class RosterWindow : KeepFitInfoWindow
     {
-        internal ConfigWindow configWindow;
-        
         private Vector2 scrollPosition;
         private bool showAvailable;
         private bool showAssigned;
 
         public RosterWindow()
+            : base(true, true, "roster")
         {
             this.WindowCaption = "KeepFit Roster";
             this.Visible = false;
             this.DragEnabled = true;
-            this.Resizable = true;
 
             this.WindowRect = new Rect(0, 0, 300, 300);
         }
 
         protected override void FillWindow(int id)
         {
+            GameConfig gameConfig = scenarioModule.GetGameConfig();
+            if (!gameConfig.enabled)
+            {
+                GUILayout.Label(new GUIContent("DISABLED"), uiResources.styleBarTextRed);
+                return;
+            }
+
+            if (gameConfig.roster == null)
+            {
+                return;
+            }
+
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginVertical();
-            if (GUILayout.Button("KeepFit Settings"))
-            {
-                configWindow.Visible = !configWindow.Visible;
-            }
-            GUILayout.Space(4);
-
             if (gameConfig.roster.available != null)
             {
                 DrawRoster(id, "Available Crew", gameConfig.roster.available.crew.Values, ref showAvailable);
             }
-
             if (gameConfig.roster.assigned != null)
             {
                 DrawRoster(id, "Assigned Crew", gameConfig.roster.assigned.crew.Values, ref showAssigned);
             }
-
             GUILayout.EndVertical();
             GUILayout.EndScrollView();
         }
@@ -73,6 +75,8 @@ namespace KeepFit
 
         private GUIStyle getGeeAccumStyle(KeepFitCrewMember crew, Period period, GeeLoadingAccumulator accum)
         {
+            GameConfig gameConfig = scenarioModule.GetGameConfig();
+
             GUIStyle style = new GUIStyle(GUI.skin.label);
             style.normal.textColor = Color.green;
             style.wordWrap = false;

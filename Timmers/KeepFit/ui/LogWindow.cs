@@ -10,36 +10,21 @@ namespace KeepFit
     {
         private Vector2 scrollPosition;
 
-        private KeepFitScenarioModule scenarioModule;
-
         public LogWindow()
+            : base(true, true, "log")
         {
             this.WindowCaption = "KeepFit Log";
             this.Visible = false;
             this.DragEnabled = true;
-            this.Resizable = true;
 
             this.WindowRect = new Rect(0, 0, 300, 300);
         }
-
-        internal void Init(KeepFitScenarioModule scenarioModule)
-        {
-            this.scenarioModule = scenarioModule;
-        }
-
 
 
 
         protected override void FillWindow(int id)
         {
             GUILayout.BeginVertical();
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(new GUIContent("Fitness"), (scenarioModule.isCrewFitnessControllerActive() ? uiResources.styleBarTextGreen : uiResources.styleBarTextRed));
-            GUILayout.Label(new GUIContent("Roster"), (scenarioModule.isCrewRosterControllerActive() ? uiResources.styleBarTextGreen : uiResources.styleBarTextRed));
-            GUILayout.Label(new GUIContent("GeeEffects"), (scenarioModule.isGeeEffectsControllerActive() ? uiResources.styleBarTextGreen : uiResources.styleBarTextRed));
-            GUILayout.EndHorizontal();
-            GUILayout.Space(4);
-
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
             GUILayout.BeginVertical();
             foreach (String logLine in Logging.GetLogBuffer())

@@ -54,7 +54,7 @@
     <Compile Include="ui\KeepFitInfoWindow.cs" />
     <Compile Include="ui\ConfigWindow.cs" />
     <Compile Include="ui\AllVesselsWindow .cs" />
-    <Compile Include="ui\InFlightActiveVesselWindow.cs" />
+    <Compile Include="ui\MainWindow.cs" />
     <Compile Include="ui\LogWindow.cs" />
     <Compile Include="ui\RosterWindow.cs" />
     <Compile Include="ui\SaveableWindow.cs" />
