@@ -20,7 +20,7 @@ namespace KeepFit
             };
             this.WindowCaption = "KeepFit";
             this.Visible = false;
-            this.DragEnabled = false;
+            this.DragEnabled = true;
 
             this.WindowRect = new Rect(Screen.width - 298, 40, 299, 20);
         }

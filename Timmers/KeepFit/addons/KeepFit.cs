@@ -160,7 +160,6 @@ namespace KeepFit
                                                                onAppLaunchDisable,
                                                                scenes,
                                                                toolbarButtonTexture);
-                ApplicationLauncher.Instance.EnableMutuallyExclusive(appLauncherButton);
                 ApplicationLauncher.Instance.AddOnRepositionCallback(onAppLauncherReposition);
             }
 
