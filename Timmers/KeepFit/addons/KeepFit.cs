@@ -248,7 +248,7 @@ namespace KeepFit
             this.Log_DebugOnly("onAppLaunchToggleOff", "ToggleOff called - hiding windows");
 
             /*Your code goes in here to toggle display off regardless of hover*/
-            hideKeepFitWindows();
+            hideKeepFitMainWindow();
         }
 
         void onAppLaunchHoverOn() 
@@ -264,7 +264,7 @@ namespace KeepFit
             this.Log_DebugOnly("onAppLaunchHoverOff", "HoverOff called - does nothing");
 
             /*Your code goes in here to show display off*/
-            hideKeepFitWindows();
+            hideKeepFitMainWindow();
         }
         
         void onAppLaunchEnable() 
@@ -284,17 +284,12 @@ namespace KeepFit
         {
             this.Log_DebugOnly("onAppLaunchDisable", "LaunchDisable called - hiding windows");
 
-            hideKeepFitWindows();
+            hideKeepFitMainWindow();
         }
 
-        private void hideKeepFitWindows()
+        private void hideKeepFitMainWindow()
         {
-            /*Your code goes in here for if it gets disabled*/
             this.mainWindow.Visible = false;
-            this.logWindow.Visible = false;
-            this.configWindow.Visible = false;
-            this.allVesselsWindow.Visible = false;
-            this.rosterWindow.Visible = false;
         }
 
         public override void OnLoad(ConfigNode gameNode)
