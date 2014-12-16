@@ -28,8 +28,7 @@ namespace KeepFit
                     GameScenes.SPACECENTER,
                     GameScenes.TRACKSTATION, 
                     GameScenes.FLIGHT, 
-                    GameScenes.EDITOR, 
-                    GameScenes.SPH);
+                    GameScenes.EDITOR);
             }
             else
             {
@@ -48,10 +47,6 @@ namespace KeepFit
                 if (!psm.targetScenes.Any(s => s == GameScenes.EDITOR))
                 {
                     psm.targetScenes.Add(GameScenes.EDITOR);
-                }
-                if (!psm.targetScenes.Any(s => s == GameScenes.SPH))
-                {
-                    psm.targetScenes.Add(GameScenes.SPH);
                 }
             }
         }
@@ -166,7 +161,7 @@ namespace KeepFit
 
             this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewRosterController");
             crewRosterController = gameObject.AddComponent<KeepFitCrewRosterController>();
-            crewRosterController.Init(gameConfig);
+            crewRosterController.Init(this);
 
             if (HighLogic.LoadedScene == GameScenes.FLIGHT ||
                 HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
@@ -174,14 +169,14 @@ namespace KeepFit
             {
                 this.Log_DebugOnly("OnAwake", "Adding KeepFitCrewFitnessController");
                 crewFitnessController = gameObject.AddComponent<KeepFitCrewFitnessController>();
-                crewFitnessController.Init(gameConfig);
+                crewFitnessController.Init(this);
             }
 
             if (HighLogic.LoadedScene == GameScenes.FLIGHT)
             {
                 this.Log_DebugOnly("OnAwake", "Adding KeepFitGeeEffectsController");
                 this.geeEffectsController = gameObject.AddComponent<KeepFitGeeEffectsController>();
-                this.geeEffectsController.Init(gameConfig);
+                this.geeEffectsController.Init(this);
             }
         }
 
@@ -228,6 +223,11 @@ namespace KeepFit
         public void ShowSettings()
         {
             this.configWindow.Visible = true;
+        }
+
+        public bool isVesselLandedOnExercisableSurface(Vessel vessel)
+        {
+            return (vessel != null && vessel.LandedOrSplashed && vessel.geeForce < gameConfig.minimumLandedGeeForExcercising);
         }
 
         void onAppLauncherReposition()

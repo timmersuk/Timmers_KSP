@@ -11,17 +11,20 @@ namespace KeepFit
         /// <summary>
         /// Per-game saved configuration information
         /// </summary>
-        protected GameConfig gameConfig { get; private set; }
+        internal KeepFitScenarioModule module { get; private set; }
+
+        protected GameConfig gameConfig;
 
         public KeepFitController()
         {
             this.Log_DebugOnly("ctor", ".");
         }
 
-        internal void Init(GameConfig gameConfig)
+        internal void Init(KeepFitScenarioModule module)
         {
-            this.Log_DebugOnly("SetGameConfig", ".");
-            this.gameConfig = gameConfig;
+            this.Log_DebugOnly("Init", ".");
+            this.module = module;
+            this.gameConfig = module.GetGameConfig();
         }
     }
 }

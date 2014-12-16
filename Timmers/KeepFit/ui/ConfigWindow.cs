@@ -61,6 +61,12 @@ namespace KeepFit
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label("Min Gee For Exercising when Landed: " + config.minimumLandedGeeForExcercising);
+            GUILayout.FlexibleSpace();
+            // TODO - need a float editor widget here for minimumLandedGeeForExcercising
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
             GUILayout.Label("Initial fitness level:" + config.initialFitnessLevel.ToString());
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("+5", GUILayout.Width(80)))

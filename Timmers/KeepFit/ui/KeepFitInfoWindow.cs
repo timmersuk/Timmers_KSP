@@ -103,21 +103,25 @@ namespace KeepFit
             return GUILayout.Button(btnMinMax, uiResources.styleButtonSettings);
         }
 
+        internal void DrawActivityLevel(ActivityLevel activityLevel)
+        {
+            Texture2D texActivityLevel;
+            uiResources.texIconsActivityLevels.TryGetValue(activityLevel, out texActivityLevel);
+            if (texActivityLevel == null)
+            {
+                GUILayout.Label("(" + activityLevel + ")");
+            }
+            else
+            {
+                GUILayout.Label(new GUIContent(uiResources.texIconsActivityLevels[activityLevel], activityLevel.ToString()));
+            }
+        }
+
         internal void DrawVesselInfo(int windowHandle, KeepFitVesselRecord vessel, bool showExpandToggle, ref bool expanded, bool showAllCrewExpanded)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(vessel.name, uiResources.styleBarText);
-            Texture2D texActivityLevel;
-            uiResources.texIconsActivityLevels.TryGetValue(vessel.activityLevel, out texActivityLevel);
-            if (texActivityLevel == null)
-            {
-                GUILayout.Label("(" + vessel.activityLevel + ")");
-            }
-            else
-            {
-                GUILayout.Label(new GUIContent(uiResources.texIconsActivityLevels[vessel.activityLevel], vessel.activityLevel.ToString()));
-            }
-            GUILayout.Label(" - (" + vessel.crew.Count() + ")");
+            GUILayout.Label("Crew - (" + vessel.crew.Count() + ")");
             GUILayout.FlexibleSpace();
             if (showExpandToggle && DrawChevron(expanded))
             {
@@ -159,6 +163,7 @@ namespace KeepFit
                 // first line - crewmember name
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(crewMember.Name + "(" + (crewMember.loaded ? "loaded" : "generated") + ")", uiResources.styleCrewName);
+                DrawActivityLevel(crewMember.activityLevel);
                 GUILayout.FlexibleSpace();
                 if (!showAllCrewExpanded && DrawChevron(expanded))
                 {

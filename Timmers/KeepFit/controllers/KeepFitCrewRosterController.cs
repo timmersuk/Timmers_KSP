@@ -45,12 +45,12 @@ namespace KeepFit
                     {
                         case ProtoCrewMember.RosterStatus.Available:
                             // you're sat on your arse in the crew building, so you can get down to the gym
-                            updateRosters(roster, gameConfig.roster.available, crewMember.name, ActivityLevel.EXERCISING);
+                            updateRosters(roster, gameConfig.roster.available, crewMember.name, ActivityLevel.EXERCISING, true);
                             break;
                         case ProtoCrewMember.RosterStatus.Assigned:
                             // in flight - do this so we don't lose track of kerbals in the non-flight windows
                             // (until i sort out how to get all current vessels outside of flight
-                            updateRosters(roster, gameConfig.roster.assigned, crewMember.name, ActivityLevel.UNKNOWN);
+                            updateRosters(roster, gameConfig.roster.assigned, crewMember.name, ActivityLevel.UNKNOWN, false);
                             break;
                         case ProtoCrewMember.RosterStatus.Dead:
                         case ProtoCrewMember.RosterStatus.Missing:
@@ -71,49 +71,73 @@ namespace KeepFit
                 }
 
                 KeepFitVesselRecord vesselRecord = new KeepFitVesselRecord(vessel.vesselName, vessel.id.ToString());
-
                 gameConfig.roster.vessels[vessel.id.ToString()] = vesselRecord;
 
-                vesselRecord.activityLevel = getDefaultActivityLevel(vessel);
-                foreach (Part part in vessel.Parts)
+                if (!vessel.loaded)
                 {
-                    foreach (PartModule module in part.Modules)
-                    {
-                        if (!(module is KeepFitPartModule))
-                        {
-                            continue;
-                        }
-
-                        KeepFitPartModule keepFitPartModule = (KeepFitPartModule)module;
-
-                        if (keepFitPartModule.activityLevel > vesselRecord.activityLevel)
-                        {
-                            vesselRecord.activityLevel = keepFitPartModule.activityLevel;
-                        }
-                        // TDXX - add code here to determine 'the best' keep fit part ... when that has meaning
-                        // instead of stopping at the first part
-                        vesselRecord.hasKeepFitPartModule = true;
-
-                        break;
-                    }
-                }
-
-                if (vessel.loaded)
-                {
-                    foreach (ProtoCrewMember crewMember in vessel.GetVesselCrew())
-                    {
-                        updateRosters(roster, vesselRecord, crewMember.name, vesselRecord.activityLevel);
-                    }
+                    refreshNonLoadedVesselRoster(roster, vesselRecord, vessel);
                 }
                 else
                 {
-                    foreach (ProtoPartSnapshot part in vessel.protoVessel.protoPartSnapshots)
+                    refreshLoadedVesselRoster(roster, vesselRecord, vessel);
+                }
+            }
+        }
+
+        private void refreshNonLoadedVesselRoster(Dictionary<string, KeepFitCrewMember> roster, 
+                                                  KeepFitVesselRecord vesselRecord,
+                                                  Vessel vessel)
+        {
+            ActivityLevel defaultActivityLevel = getDefaultActivityLevel(vessel);
+
+            foreach (ProtoPartSnapshot part in vessel.protoVessel.protoPartSnapshots)
+            {
+                foreach (ProtoCrewMember crewMember in part.protoModuleCrew)
+                {
+                    updateRosters(roster, vesselRecord, crewMember.name, defaultActivityLevel, false);
+                }
+            }
+        }
+
+        private void refreshLoadedVesselRoster(Dictionary<string, KeepFitCrewMember> roster,
+                                               KeepFitVesselRecord vesselRecord,
+                                               Vessel vessel)
+        {
+            foreach (Part part in vessel.Parts)
+            {
+                if (part.CrewCapacity == 0)
+                {
+                    continue;
+                }
+
+                bool hasSeat = false;
+                bool hasCommandModule = false;
+                ActivityLevel partActivityLevel = getDefaultActivityLevel(vessel);
+
+                foreach (PartModule module in part.Modules)
+                {
+                    if (module is KerbalSeat)
                     {
-                        foreach (ProtoCrewMember crewMember in part.protoModuleCrew)
+                        hasSeat = true;
+                    }
+                    else if (module is ModuleCommand)
+                    {
+                        hasCommandModule = true;
+                    }
+                    else if (module is KeepFitPartModule)
+                    {
+                        KeepFitPartModule keepFitPartModule = (KeepFitPartModule)module;
+
+                        if (keepFitPartModule.activityLevel > partActivityLevel)
                         {
-                            updateRosters(roster, vesselRecord, crewMember.name, vesselRecord.activityLevel);
+                            partActivityLevel = keepFitPartModule.activityLevel;
                         }
                     }
+                }
+
+                foreach (ProtoCrewMember partCrewMember in part.protoModuleCrew)
+                {
+                    updateRosters(roster, vesselRecord, partCrewMember.name, partActivityLevel, true);
                 }
             }
         }
@@ -138,7 +162,7 @@ namespace KeepFit
         private ActivityLevel getDefaultActivityLevel(Vessel vessel)
         {
             // if vessel is landed/splashed then assume we can exercise freely (meh)
-            if (vessel.LandedOrSplashed)
+            if (module.isVesselLandedOnExercisableSurface(vessel))
             {
                 return ActivityLevel.EXERCISING;
             }
@@ -149,7 +173,8 @@ namespace KeepFit
         private KeepFitCrewMember updateRosters(Dictionary<string, KeepFitCrewMember> roster,
                                                 KeepFitVesselRecord vessel,
                                                 string name,
-                                                ActivityLevel activityLevel)
+                                                ActivityLevel activityLevel,
+                                                bool activityLevelReliable)
         {
             this.Log_DebugOnly("updateRosters", "updating crewMember[{0}] activityLevel[{1}]]", name, activityLevel);
 
@@ -166,12 +191,14 @@ namespace KeepFit
                 // not in the old roster - add him to the new one ... 
                 keepFitCrewMember = new KeepFitCrewMember(name, false);
                 keepFitCrewMember.fitnessLevel = gameConfig.initialFitnessLevel;
+                keepFitCrewMember.activityLevel = activityLevel;
                 roster[name] = keepFitCrewMember;
             }
 
-            //keepFitCrewMember.vessel = vessel;
-            keepFitCrewMember.activityLevel = activityLevel;
-            
+            if (activityLevelReliable)
+            {
+                keepFitCrewMember.activityLevel = activityLevel;
+            }            
 
             vessel.crew[name] = keepFitCrewMember;
 

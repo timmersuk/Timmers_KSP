@@ -76,6 +76,9 @@ namespace KeepFit
         internal float degradationWhenExercising = 1.0f;
 
         [Persistent]
+        internal float minimumLandedGeeForExcercising = 0.05f;
+
+        [Persistent]
         internal Roster roster = new Roster();
 
         [Persistent]
@@ -172,12 +175,6 @@ namespace KeepFit
 
         [Persistent]
         internal string id;
-
-        [Persistent]
-        internal bool hasKeepFitPartModule;
-
-        [Persistent]
-        internal ActivityLevel activityLevel;
 
         [Persistent]
         private KeepFitCrewMember[] crewStore;

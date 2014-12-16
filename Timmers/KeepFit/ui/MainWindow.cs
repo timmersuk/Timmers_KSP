@@ -8,9 +8,6 @@ namespace KeepFit
 {
     class MainWindow : KeepFitInfoWindow
     {
-        private Vector2 scrollPosition;
-
-
         public MainWindow()
             : base(true, false, "main")
         {

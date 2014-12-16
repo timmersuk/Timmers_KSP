@@ -13,21 +13,18 @@ namespace KeepFit
     public class KeepFitPartModule  : PartModule
     {
         // Values from the .cfg file
-        [KSPField(guiActiveEditor = true, isPersistant = false, guiActive = true, guiName="KeepFit Activity Level")]
+        [KSPField(guiActiveEditor = true, isPersistant = false, guiActive = true, guiName="KeepFit Original Activity Level")]
         public string strActivityLevel = ActivityLevel.UNKNOWN.ToString();
 
-        internal ActivityLevel activityLevel;
-
+        internal ActivityLevel activityLevel { get; private set; }
 
         public override void OnAwake()
         {
             this.Log_DebugOnly("Awake", "Part[{0}] strActivityLevel[{1}]", this.name, this.strActivityLevel);
 
-            if (strActivityLevel == null)
-            {
-                activityLevel = ActivityLevel.COMFY;
-            }
-            else
+            activityLevel = ActivityLevel.COMFY;
+            
+            if (strActivityLevel != null)
             {
                 try
                 {
@@ -37,7 +34,7 @@ namespace KeepFit
                 {
                     this.Log_DebugOnly("Awake", "Part[{0}] strActivityLevel[{1}] is not a valid ActivityLevel", this.name, this.strActivityLevel);
                 }
-            }
+            }                
         }
 
         /// <summary>
