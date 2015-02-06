@@ -114,6 +114,16 @@ namespace KeepFit
             Name = name;
         }
 
+        public bool WantsBetterSeat()
+        {
+            return true; // TODO: configurable globally / per Kerbal?
+        }
+
+        public bool WillGiveUpSeat()
+        {
+            return true; // TODO: configure globally / per Kerbal?
+        }
+
         internal void AddTime(float elapsed)
         {
             float existing = 0;

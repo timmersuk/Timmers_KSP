@@ -99,10 +99,28 @@ namespace KeepFit
             }
         }
 
+        private List<ActivityLevel> levelsBestToWorst = new List<ActivityLevel>()
+        {
+            ActivityLevel.EXERCISING,
+            ActivityLevel.NEUTRAL,
+            ActivityLevel.COMFY,
+            ActivityLevel.CRAMPED
+        };
+
         private void refreshLoadedVesselRoster(Dictionary<string, KeepFitCrewMember> roster,
                                                KeepFitVesselRecord vesselRecord,
                                                Vessel vessel)
         {
+            Dictionary<ActivityLevel, int> shipSeats = new Dictionary<ActivityLevel, int>();
+            Dictionary<ActivityLevel, List<KeepFitCrewMember>> shipCrew = new Dictionary<ActivityLevel, List<KeepFitCrewMember>>();
+            HashSet<KeepFitCrewMember> seatUpgradePool = new HashSet<KeepFitCrewMember>();
+
+            foreach (ActivityLevel level in Enum.GetValues(typeof(ActivityLevel)))
+            {
+                shipSeats[level] = 0;
+                shipCrew[level] = new List<KeepFitCrewMember>();
+            }
+
             foreach (Part part in vessel.Parts)
             {
                 if (part.CrewCapacity == 0)
@@ -110,21 +128,11 @@ namespace KeepFit
                     continue;
                 }
 
-                bool hasSeat = false;
-                bool hasCommandModule = false;
                 ActivityLevel partActivityLevel = getDefaultActivityLevel(vessel);
 
                 foreach (PartModule module in part.Modules)
                 {
-                    if (module is KerbalSeat)
-                    {
-                        hasSeat = true;
-                    }
-                    else if (module is ModuleCommand)
-                    {
-                        hasCommandModule = true;
-                    }
-                    else if (module is KeepFitPartModule)
+                    if (module is KeepFitPartModule)
                     {
                         KeepFitPartModule keepFitPartModule = (KeepFitPartModule)module;
 
@@ -135,9 +143,54 @@ namespace KeepFit
                     }
                 }
 
+                shipSeats[partActivityLevel] += part.CrewCapacity;
+
                 foreach (ProtoCrewMember partCrewMember in part.protoModuleCrew)
                 {
-                    updateRosters(roster, vesselRecord, partCrewMember.name, partActivityLevel, true);
+                    KeepFitCrewMember crew = updateRosters(roster, vesselRecord, partCrewMember.name, partActivityLevel, true);
+                    shipCrew[partActivityLevel].Add(crew);
+                    if (crew.WantsBetterSeat())
+                    {
+                        seatUpgradePool.Add(crew);
+                    }
+                }
+            }
+
+            foreach (ActivityLevel level in levelsBestToWorst)
+            {
+                int freeSeats = shipSeats[level];
+                foreach (KeepFitCrewMember crew in shipCrew[level])
+                {
+                    if (crew.activityLevel > level)
+                    {
+                        // They were already upgraded, ignore them.
+                    }
+                    else if (crew.WillGiveUpSeat())
+                    {
+                        // Effectively, vacate the seat immediately and join the pool.
+                        // If unfit or plenty of seats available, will get immediately re-added to the seat.
+                        seatUpgradePool.Add(crew);
+                    }
+                    else
+                    {
+                        freeSeats -= 1;
+                        seatUpgradePool.Remove(crew); // already in the best seat possible
+                    }
+                }
+
+                this.Log_DebugOnly("KeepFitSeats", "" + vessel.name + " seats [" + level + "]: " + freeSeats + " available, " + shipSeats[level] + " total");
+
+                foreach (KeepFitCrewMember crew in seatUpgradePool.OrderBy(crew => crew.fitnessLevel).ToList())
+                {
+                    if (freeSeats < 1)
+                    {
+                        break;
+                    }
+
+                    this.Log_DebugOnly("KeepFitSeatUpgrade", "Upgrading " + crew.Name + " from " + crew.activityLevel + " to " + level);
+                    updateRosters(roster, vesselRecord, crew.Name, level, true);
+                    seatUpgradePool.Remove(crew);
+                    freeSeats -= 1;
                 }
             }
         }
