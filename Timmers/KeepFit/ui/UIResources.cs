@@ -73,11 +73,11 @@ namespace KeepFit
         private static String _ClassName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name;
 
         private static String PathApp = KSPUtil.ApplicationRootPath.Replace("\\", "/");
-        private static String PathKeepFit = string.Format("{0}GameData/Timmers/KeepFit", PathApp);
+        private static String PathKeepFit = string.Format("{0}GameData/KeepFit", PathApp);
         private static String PathPluginData = string.Format("{0}/PluginData/{1}", PathKeepFit, _ClassName);
         private static String PathTextures = string.Format("{0}/{1}", PathKeepFit, _ClassName);
 
-        public static String DBPathKeepFit = string.Format("Timmers/KeepFit");
+        public static String DBPathKeepFit = string.Format("KeepFit");
         public static String DBPathTextures = string.Format("{0}/{1}", DBPathKeepFit, _ClassName);
         public static String DBPathSounds = string.Format("{0}/Sounds/{1}", DBPathKeepFit, _ClassName);
         
