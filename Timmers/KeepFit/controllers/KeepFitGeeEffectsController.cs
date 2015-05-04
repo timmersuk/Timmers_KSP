@@ -174,7 +174,7 @@ namespace KeepFit
 
         private void onGeeFatal(KeepFitCrewMember crewMember)
         {
-            if (gameConfig.wimpMode)
+            if (!gameConfig.enabled || gameConfig.wimpMode)
             {
                 string formatted = string.Format("KeepFit - Crewman {0} suffered momentary G-LOC!", crewMember.Name);
 
