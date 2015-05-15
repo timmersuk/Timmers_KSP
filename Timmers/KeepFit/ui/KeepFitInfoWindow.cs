@@ -103,6 +103,23 @@ namespace KeepFit
             return GUILayout.Button(btnMinMax, uiResources.styleButtonSettings);
         }
 
+        internal void DrawExperienceTrait(KeepFitCrewMember crewMember)
+        {
+            ProtoCrewMember proto = HighLogic.CurrentGame.CrewRoster[crewMember.Name];
+            if (proto != null)
+            {
+                Texture2D texTrait = proto.experienceTrait.Config.IconImage;
+                if (texTrait == null)
+                {
+                    GUILayout.Label("(" + proto.experienceTrait.Title + ")");
+                }
+                else
+                {
+                    GUILayout.Label(new GUIContent(texTrait));
+                }
+            }
+        }
+
         internal void DrawActivityLevel(ActivityLevel activityLevel)
         {
             Texture2D texActivityLevel;
@@ -163,6 +180,7 @@ namespace KeepFit
                 // first line - crewmember name
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(crewMember.Name + "(" + (crewMember.loaded ? "loaded" : "generated") + ")", uiResources.styleCrewName);
+                DrawExperienceTrait(crewMember);
                 DrawActivityLevel(crewMember.activityLevel);
                 GUILayout.FlexibleSpace();
                 if (!showAllCrewExpanded && DrawChevron(expanded))
