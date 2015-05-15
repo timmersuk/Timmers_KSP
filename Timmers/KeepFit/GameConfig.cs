@@ -61,6 +61,9 @@ namespace KeepFit
         internal Boolean wimpMode = false;
 
         [Persistent]
+        internal Boolean useBestPartOnVessel = false; 
+
+        [Persistent]
         internal Double lastExerciseUT = -1;
 
         /// <summary>

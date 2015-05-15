@@ -51,14 +51,8 @@ namespace KeepFit
                 SkinsLibrary.SetCurrent(SkinsLibrary.DefSkinType.Unity);
             GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("WimpMode: " + (config.wimpMode ? "Enabled" : "Disabled"));
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button((config.wimpMode ? "Disable" : "Enable"), GUILayout.Width(80)))
-            {
-                config.wimpMode = !config.wimpMode;
-            }
-            GUILayout.EndHorizontal();
+            config.wimpMode = GUILayout.Toggle(config.wimpMode, "WimpMode: ", GUILayout.Width(80));
+            config.useBestPartOnVessel = GUILayout.Toggle(config.useBestPartOnVessel, "Use Best Part On Vessel: ", GUILayout.Width(80));
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Min Gee For Exercising when Landed: " + config.minimumLandedGeeForExcercising);

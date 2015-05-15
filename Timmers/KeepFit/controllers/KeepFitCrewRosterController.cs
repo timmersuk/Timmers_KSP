@@ -103,6 +103,9 @@ namespace KeepFit
                                                KeepFitVesselRecord vesselRecord,
                                                Vessel vessel)
         {
+            ActivityLevel vesselDefaultActivityLevel = getDefaultActivityLevel(vessel);
+            ActivityLevel vesselBestActivityLevel = vesselDefaultActivityLevel;
+
             foreach (Part part in vessel.Parts)
             {
                 if (part.CrewCapacity == 0)
@@ -110,34 +113,37 @@ namespace KeepFit
                     continue;
                 }
 
-                bool hasSeat = false;
-                bool hasCommandModule = false;
-                ActivityLevel partActivityLevel = getDefaultActivityLevel(vessel);
+                ActivityLevel bestPartActivityLevel = vesselDefaultActivityLevel;
 
-                foreach (PartModule module in part.Modules)
+                // check all modules on the part in case we have multiple KeepFit modules for some reason
+                foreach (KeepFitPartModule module in part.FindModulesImplementing<KeepFitPartModule>())
                 {
-                    if (module is KerbalSeat)
+                    ActivityLevel partActivityLevel = module.activityLevel;
+                    if (partActivityLevel > bestPartActivityLevel)
                     {
-                        hasSeat = true;
-                    }
-                    else if (module is ModuleCommand)
-                    {
-                        hasCommandModule = true;
-                    }
-                    else if (module is KeepFitPartModule)
-                    {
-                        KeepFitPartModule keepFitPartModule = (KeepFitPartModule)module;
-
-                        if (keepFitPartModule.activityLevel > partActivityLevel)
-                        {
-                            partActivityLevel = keepFitPartModule.activityLevel;
-                        }
+                        bestPartActivityLevel = module.activityLevel;
                     }
                 }
 
-                foreach (ProtoCrewMember partCrewMember in part.protoModuleCrew)
+                if (bestPartActivityLevel > vesselBestActivityLevel)
                 {
-                    updateRosters(roster, vesselRecord, partCrewMember.name, partActivityLevel, true);
+                    vesselBestActivityLevel = bestPartActivityLevel;
+                }
+
+                if (!gameConfig.useBestPartOnVessel)
+                {
+                    foreach (ProtoCrewMember partCrewMember in part.protoModuleCrew)
+                    {
+                        updateRosters(roster, vesselRecord, partCrewMember.name, bestPartActivityLevel, true);
+                    }
+                }
+            }
+
+            if (gameConfig.useBestPartOnVessel)
+            {
+                foreach (ProtoCrewMember partCrewMember in vessel.GetVesselCrew())
+                {
+                    updateRosters(roster, vesselRecord, partCrewMember.name, vesselBestActivityLevel, true);
                 }
             }
         }

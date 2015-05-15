@@ -13,7 +13,7 @@ namespace KeepFit
     public class KeepFitPartModule  : PartModule
     {
         // Values from the .cfg file
-        [KSPField(guiActiveEditor = true, isPersistant = false, guiActive = true, guiName="Activity Level")]
+        [KSPField(guiActiveEditor = true, isPersistant = true, guiActive = true, guiName="Activity Level")]
         public string strActivityLevel = ActivityLevel.UNKNOWN.ToString();
 
         internal ActivityLevel activityLevel { get; private set; }
