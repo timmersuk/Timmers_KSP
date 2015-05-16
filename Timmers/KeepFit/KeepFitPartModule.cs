@@ -12,6 +12,8 @@ namespace KeepFit
     /// </summary>
     public class KeepFitPartModule  : PartModule
     {
+        private static Dictionary<ActivityLevel, string> infoColorMap;
+
         // Values from the .cfg file
         [KSPField(guiActiveEditor = true, isPersistant = true, guiActive = true, guiName="Activity Level")]
         public string strActivityLevel = ActivityLevel.UNKNOWN.ToString();
@@ -22,19 +24,37 @@ namespace KeepFit
         {
             this.Log_DebugOnly("Awake", "Part[{0}] strActivityLevel[{1}]", this.name, this.strActivityLevel);
 
-            activityLevel = ActivityLevel.COMFY;
-            
-            if (strActivityLevel != null)
+            if (infoColorMap == null)
             {
-                try
+                infoColorMap = new Dictionary<ActivityLevel, string>(5);
+                infoColorMap[ActivityLevel.UNKNOWN] = "maroon";
+                infoColorMap[ActivityLevel.CRAMPED] = "red";
+                infoColorMap[ActivityLevel.COMFY] = "orange";
+                infoColorMap[ActivityLevel.NEUTRAL] = "aqua";
+                infoColorMap[ActivityLevel.EXERCISING] = "lime";
+            }
+
+            initActivityLevel();
+        }
+
+        private void initActivityLevel()
+        {
+            if (activityLevel == ActivityLevel.UNKNOWN)
+            {
+                activityLevel = ActivityLevel.COMFY;
+
+                if (strActivityLevel != null)
                 {
-                    activityLevel = (ActivityLevel)Enum.Parse(typeof(ActivityLevel), strActivityLevel);
+                    try
+                    {
+                        activityLevel = (ActivityLevel)Enum.Parse(typeof(ActivityLevel), strActivityLevel);
+                    }
+                    catch (ArgumentException)
+                    {
+                        this.Log_DebugOnly("initActivityLevel", "Part[{0}] strActivityLevel[{1}] is not a valid ActivityLevel", this.name, this.strActivityLevel);
+                    }
                 }
-                catch (ArgumentException)
-                {
-                    this.Log_DebugOnly("Awake", "Part[{0}] strActivityLevel[{1}] is not a valid ActivityLevel", this.name, this.strActivityLevel);
-                }
-            }                
+            }
         }
 
         /// <summary>
@@ -61,5 +81,20 @@ namespace KeepFit
         {
             print("KeepFitPartModule::Destroy");
         }
+
+        // Method to provide extra infomation about the part on response to the RMB
+        public override string GetInfo()
+        {
+            initActivityLevel();
+
+            if (this.part.CrewCapacity == 0)
+            {
+                return "";
+            }
+
+
+            return "Activity Level: <color=" + infoColorMap[activityLevel] + ">" + this.activityLevel.ToString() + "</color>";
+        }
+
     }
 }

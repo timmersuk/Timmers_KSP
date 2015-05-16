@@ -232,7 +232,6 @@ namespace KeepFit
 
         void onAppLauncherReposition()
         {
-
         }
 
         void onAppLaunchToggleOn() 
@@ -256,7 +255,7 @@ namespace KeepFit
             this.Log_DebugOnly("onAppLaunchHoverOn", "HoverOn called - does nothing");
 
             /*Your code goes in here to show display on*/
-            showKeepFitWindow();
+            //showKeepFitWindow();
         }
 
         void onAppLaunchHoverOff() 
@@ -264,7 +263,7 @@ namespace KeepFit
             this.Log_DebugOnly("onAppLaunchHoverOff", "HoverOff called - does nothing");
 
             /*Your code goes in here to show display off*/
-            hideKeepFitMainWindow();
+            //hideKeepFitMainWindow();
         }
         
         void onAppLaunchEnable() 
