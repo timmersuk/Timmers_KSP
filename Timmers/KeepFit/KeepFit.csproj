@@ -36,6 +36,10 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="CLSInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameData\KeepFit\CLSInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
@@ -72,6 +76,7 @@
     <Compile Include="ksppluginframework\MonoBehaviourExtended.cs" />
     <Compile Include="ksppluginframework\MonoBehaviourWindow.cs" />
     <Compile Include="ksppluginframework\SkinsLibrary.cs" />
+    <Compile Include="utils\CLSClient.cs" />
     <Compile Include="utils\Logging.cs" />
     <Compile Include="Period.cs" />
     <Compile Include="utils\WeakReference.cs" />

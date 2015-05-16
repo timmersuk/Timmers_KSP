@@ -54,6 +54,8 @@ namespace KeepFit
 
     class KeepFitScenarioModule : ScenarioModule
     {
+        private static ConnectedLivingSpace.ICLSAddon cls;
+
         /// <summary>
         /// AppLauncher button
         /// </summary>
@@ -86,6 +88,7 @@ namespace KeepFit
         /// </summary>
         private GameConfig gameConfig = new GameConfig();
 
+
         public KeepFitScenarioModule()
         {
             this.Log_DebugOnly("Constructor", ".");
@@ -97,6 +100,11 @@ namespace KeepFit
         {
             this.Log_DebugOnly("OnAwake", "Scene[{0}]", HighLogic.LoadedScene);
             base.OnAwake();
+
+            if (cls == null)
+            {
+                cls = CLSClient.GetCLS();
+            }
 
             if (mainWindow == null)
             {
@@ -188,6 +196,11 @@ namespace KeepFit
         public bool isKeepFitEnabled()
         {
             return gameConfig.enabled;
+        }
+
+        public ConnectedLivingSpace.ICLSAddon GetCLS()
+        {
+            return cls;
         }
 
         public bool isCrewFitnessControllerActive() 

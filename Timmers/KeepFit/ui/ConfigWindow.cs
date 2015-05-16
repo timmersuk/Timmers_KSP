@@ -52,7 +52,11 @@ namespace KeepFit
             GUILayout.EndHorizontal();
 
             config.wimpMode = GUILayout.Toggle(config.wimpMode, "WimpMode: ", GUILayout.Width(80));
-            config.useBestPartOnVessel = GUILayout.Toggle(config.useBestPartOnVessel, "Use Best Part On Vessel: ", GUILayout.Width(80));
+            config.useBestPartOnVessel = GUILayout.Toggle(config.useBestPartOnVessel, "Use Best Overall Part On Vessel: ", GUILayout.Width(80));
+            if (scenarioModule.GetCLS() != null)
+            {
+                config.applyCLSLimitsIfAvailable = GUILayout.Toggle(config.applyCLSLimitsIfAvailable, "Apply CLS limits: ", GUILayout.Width(80));
+            }
 
             GUILayout.BeginHorizontal();
             GUILayout.Label("Min Gee For Exercising when Landed: " + config.minimumLandedGeeForExcercising);
