@@ -54,7 +54,7 @@ namespace KeepFit
 
     class KeepFitScenarioModule : ScenarioModule
     {
-        private static ConnectedLivingSpace.ICLSAddon cls;
+        private ConnectedLivingSpace.ICLSAddon cls;
 
         /// <summary>
         /// AppLauncher button

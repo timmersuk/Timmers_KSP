@@ -129,15 +129,15 @@ namespace KeepFit
             {
                 ActivityLevel spaceBestActivityLevel = vesselDefaultActivityLevel;
 
-                foreach (Part part in space.Parts)
+                foreach (ConnectedLivingSpace.ICLSPart part in space.Parts)
                 {
-                    if (part.CrewCapacity == 0)
+                    if (part.Part.CrewCapacity == 0)
                     {
                         continue;
                     }
 
                     // check all modules on the part in case we have multiple KeepFit modules for some reason
-                    foreach (KeepFitPartModule kfModule in part.FindModulesImplementing<KeepFitPartModule>())
+                    foreach (KeepFitPartModule kfModule in part.Part.FindModulesImplementing<KeepFitPartModule>())
                     {
                         ActivityLevel partActivityLevel = kfModule.activityLevel;
                         if (partActivityLevel > spaceBestActivityLevel)
@@ -146,9 +146,9 @@ namespace KeepFit
                         }
                     }
 
-                    foreach (ProtoCrewMember partCrewMember in space.Crew)
+                    foreach (ConnectedLivingSpace.ICLSKerbal partCrewMember in space.Crew)
                     {
-                        updateRosters(roster, vesselRecord, partCrewMember.name, spaceBestActivityLevel, true);
+                        updateRosters(roster, vesselRecord, partCrewMember.Kerbal.name, spaceBestActivityLevel, true);
                     }
                 }
 
