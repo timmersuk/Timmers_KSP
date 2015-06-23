@@ -46,6 +46,9 @@ namespace KeepFit
     public class GameConfig : ConfigNodeStorage
     {
         [Persistent]
+        private Dictionary<string, Vector4> windowRects = new Dictionary<string, Vector4>();
+
+        [Persistent]
         internal Single initialFitnessLevel = 90;
 
         [Persistent]
@@ -125,6 +128,23 @@ namespace KeepFit
             {
                 initialFitnessLevel = minFitnessLevel;
             }
+        }
+
+        public void SetWindowRect(string name, Rect value)
+        {
+            windowRects[name] = new Vector4(value.xMin, value.yMin, value.width, value.height);
+        }
+
+        public bool GetWindowRect(string name, ref Rect destination)
+        {
+            Vector4 destVector;
+            if (windowRects.TryGetValue(name, out destVector))
+            {
+                destination = new Rect(destVector.x, destVector.y, destVector.z, destVector.w);
+                return true;
+            }
+
+            return false;
         }
 
         public GeeToleranceConfig GetGeeTolerance(Period period)

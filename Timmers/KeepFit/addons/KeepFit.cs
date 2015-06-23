@@ -61,6 +61,7 @@ namespace KeepFit
         /// </summary>
         private ApplicationLauncherButton appLauncherButton;
 
+
         private MainWindow mainWindow;
         private RosterWindow rosterWindow;
         private AllVesselsWindow allVesselsWindow;
@@ -137,6 +138,8 @@ namespace KeepFit
                 allVesselsWindow = gameObject.AddComponent<AllVesselsWindow>();
                 allVesselsWindow.Init(this);
             }
+
+
 
 
             if (appLauncherButton != null)
@@ -237,7 +240,6 @@ namespace KeepFit
         {
             this.configWindow.Visible = true;
         }
-
         public bool isVesselLandedOnExercisableSurface(Vessel vessel)
         {
             return (vessel != null && vessel.LandedOrSplashed && vessel.geeForce < gameConfig.minimumLandedGeeForExcercising);
@@ -308,20 +310,20 @@ namespace KeepFit
         {
             base.OnLoad(gameNode);
 
-            mainWindow.Load(gameNode);
-            this.Log_DebugOnly("OnLoad: ", "Loaded mainWindow");
-            
-            logWindow.Load(gameNode);
-            this.Log_DebugOnly("OnLoad: ", "Loaded logWindow");
-
-            configWindow.Load(gameNode);
-            this.Log_DebugOnly("OnLoad: ", "Loaded configWindow");
-
-            rosterWindow.Load(gameNode);
-            this.Log_DebugOnly("OnLoad: ", "Loaded rosterWindow");
-
             gameConfig.Load(gameNode, true);
             this.Log_DebugOnly("OnLoad: ", "Loaded gameConfig");
+
+            mainWindow.Load(gameConfig);
+            this.Log_DebugOnly("OnLoad: ", "Loaded mainWindow");
+
+            logWindow.Load(gameConfig);
+            this.Log_DebugOnly("OnLoad: ", "Loaded logWindow");
+
+            configWindow.Load(gameConfig);
+            this.Log_DebugOnly("OnLoad: ", "Loaded configWindow");
+
+            rosterWindow.Load(gameConfig);
+            this.Log_DebugOnly("OnLoad: ", "Loaded rosterWindow");
         }
 
         public override void OnSave(ConfigNode gameNode)
@@ -329,14 +331,11 @@ namespace KeepFit
             this.Log_DebugOnly("OnSave", ".");
             base.OnSave(gameNode);
 
-            if (configWindow != null)
-            {
-                configWindow.Save(gameNode);
-            } 
-            if (rosterWindow != null)
-            {
-                rosterWindow.Save(gameNode);
-            }
+            if (mainWindow != null) { mainWindow.Save(gameConfig); }
+            if (logWindow != null) { logWindow.Save(gameConfig); }
+            if (configWindow != null) { configWindow.Save(gameConfig); }
+            if (rosterWindow != null) { rosterWindow.Save(gameConfig); }
+            
             gameConfig.Save(gameNode);
 
             this.Log_DebugOnly("OnSave", "Saved keepfit persistence data");

@@ -8,46 +8,6 @@ namespace KeepFit
 {
     public abstract class SaveableWindow : MonoBehaviourWindow
     {
-        private class RectStorage
-        {
-            [Persistent]
-            internal float x, y, width, height;
-
-            public Rect Restore()
-            {
-                Rect ret = new Rect();
-                ret.x = x;
-                ret.y = y;
-                ret.width = width;
-                ret.height = height;
-
-                return ret;
-            }
-
-            public RectStorage Store(Rect source)
-            {
-                this.x = source.x;
-                this.y = source.y;
-                this.width = source.width;
-                this.height = source.height;
-
-                return this;
-            }
-        }
-
-        private class Config : ConfigNodeStorage
-        {
-
-            //Custom Class Storage
-            [Persistent]
-            internal RectStorage WindowRectStore = new RectStorage();
-
-            internal Config(string configNodeName)
-                : base(configNodeName)
-            {
-            }
-        }
-
         private readonly string configNodeName;
 
         private GUIStyle closeButtonStyle;
@@ -83,26 +43,21 @@ namespace KeepFit
             }
         }
 
-        public void Load(ConfigNode configNode)
+        internal void Load(GameConfig config)
         {
             this.Log_DebugOnly("Load", "Loading config for window[{0}]", configNodeName);
-            Config config = new Config(configNodeName);
-            if (config.Load(configNode, true) &&
-                config.WindowRectStore != null &&
-                config.WindowRectStore.height != 0 &&
-                config.WindowRectStore.width != 0)
-            {
-                WindowRect = config.WindowRectStore.Restore();
-            }
+
+            config.GetWindowRect(configNodeName, ref WindowRect);
+
             this.Log_DebugOnly("Load", "Loaded config for window[{0}] WindowRect[{1}]", configNodeName, WindowRect);
         }
 
-        public virtual void Save(ConfigNode configNode)
+        internal void Save(GameConfig config)
         {
             this.Log_DebugOnly("Save", "Saving config for window[{0}]", configNodeName);
-            Config config = new Config(configNodeName);
-            config.WindowRectStore.Store(WindowRect);
-            config.Save(configNode);
+
+            config.SetWindowRect(configNodeName, WindowRect);
+
             this.Log_DebugOnly("Load", "Saved config for window[{0}] WindowRect[{1}]", configNodeName, WindowRect);
         }
 
