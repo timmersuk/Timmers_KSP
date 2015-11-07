@@ -80,6 +80,10 @@
     <Compile Include="utils\Logging.cs" />
     <Compile Include="Period.cs" />
     <Compile Include="utils\WeakReference.cs" />
+	<Compile Include="GEffects\GEffectsAPI.cs" />
+    <Compile Include="KeepFitAPIImplementation.cs" />
+	<Compile Include="PublicAPI\APIReflectionCaller.cs" />
+    <Compile Include="PublicAPI\KeepFitAPI.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
