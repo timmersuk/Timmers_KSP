@@ -88,6 +88,8 @@ namespace KeepFit
         /// Main copy of the per-game config
         /// </summary>
         private GameConfig gameConfig = new GameConfig();
+        
+        private KeepFitAPIImplementation keepFitAPIImplementation = KeepFitAPIImplementation.instance();
 
 
         public KeepFitScenarioModule()
@@ -95,6 +97,8 @@ namespace KeepFit
             this.Log_DebugOnly("Constructor", ".");
 
             gameConfig = new GameConfig();
+            
+            keepFitAPIImplementation.setGameConfig(gameConfig);
         }
 
         public override void OnAwake()

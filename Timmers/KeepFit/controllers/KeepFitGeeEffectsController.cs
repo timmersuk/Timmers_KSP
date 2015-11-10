@@ -12,7 +12,13 @@ namespace KeepFit
     public class KeepFitGeeEffectsController : KeepFitController
     {
         private double lastGeeLoadingUpdateUT = -1;
+		private G_Effects.GEffectsAPI gEffectsAPI = new G_Effects.GEffectsAPI();
 
+		internal override void Init(KeepFitScenarioModule module)
+		{
+			base.Init(module);
+			gEffectsAPI.initialize();
+		}		
 
         internal void Awake()
         {
@@ -101,7 +107,8 @@ namespace KeepFit
         {
             Ok, GeeWarn, GeeFatal
         }
-
+        
+        
         private void handleGeeLoadingUpdates(KeepFitCrewMember crew, 
                                             float gee, 
                                             float duration)
@@ -119,11 +126,13 @@ namespace KeepFit
 
                 if (tolerance != null && accum != null)
                 {
-                    GeeLoadingOutCome outcome = handleGeeLoadingUpdate(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier);
-                    if (outcome > harshestOutcome)
-                    {
-                        harshestOutcome = outcome;
-                    }
+                	if (! tryHandleWithGEffectsMod(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier)) {
+	                    GeeLoadingOutCome outcome = handleGeeLoadingUpdate(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier);
+	                    if (outcome > harshestOutcome)
+	                    {
+	                        harshestOutcome = outcome;
+	                    }
+                	}
                 }
             }   
     
@@ -136,6 +145,27 @@ namespace KeepFit
                     onGeeWarn(crew);
                     break;
             }
+        }
+        
+        private bool tryHandleWithGEffectsMod(KeepFitCrewMember crewMember, 
+                                            float geeLoading, 
+                                            float elapsedSeconds, 
+                                            GeeLoadingAccumulator accum, 
+                                            GeeToleranceConfig tolerance,
+                                            float healthGeeToleranceModifier) {
+			if (! gEffectsAPI.isInitialized()) {
+        		return false;
+        	}
+        	double? downwardG = gEffectsAPI.getDownwardG(crewMember.Name);
+			double? forwardG = gEffectsAPI.getForwardG(crewMember.Name);
+			if ((downwardG == null) || (forwardG == null)) {
+				return false;
+			}
+			
+			//The plain (medical) sum of longitudal and lateral G loads is used for G. Also the regular vector module Math.Sqrt(Math.Pow(downwardG, 2) + Math.Pow(upwardG, 2)) may be used.
+			handleGeeLoadingUpdate(crewMember, Math.Abs((float)downwardG) + Math.Abs((float)forwardG), elapsedSeconds, accum, tolerance, healthGeeToleranceModifier);
+			//The outcome is ignored for not displaying warning messages because G-Effects mod has enough visual warnings itself  
+			return true;        	
         }
 
         private GeeLoadingOutCome handleGeeLoadingUpdate(KeepFitCrewMember crewMember, 

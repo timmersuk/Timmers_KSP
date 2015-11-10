@@ -20,7 +20,7 @@ namespace KeepFit
             this.Log_DebugOnly("ctor", ".");
         }
 
-        internal void Init(KeepFitScenarioModule module)
+        internal virtual void Init(KeepFitScenarioModule module)
         {
             this.Log_DebugOnly("Init", ".");
             this.module = module;
