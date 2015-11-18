@@ -33,7 +33,7 @@ namespace KeepFit
             this.Log_DebugOnly("Awakening the {0}", _ClassName);
 
             this.WindowCaption = "KeepFit All Vessels";
-            this.Visible = false;
+            this.Hide();
             this.DragEnabled = true;
             this.TooltipsEnabled = true;
 

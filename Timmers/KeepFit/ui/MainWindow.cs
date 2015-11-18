@@ -16,7 +16,7 @@ namespace KeepFit
                 GUILayout.ExpandHeight(true)
             };
             this.WindowCaption = "KeepFit";
-            this.Visible = false;
+            this.Hide();
             this.DragEnabled = true;
 
             this.WindowRect = new Rect(Screen.width - 298, 40, 299, 20);

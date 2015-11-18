@@ -33,23 +33,16 @@ namespace KeepFit
             this.scenarioModule = scenarioModule;
         }
 
-
-        internal void Show()
-        {
-            this.Visible = true;
-        }
+        
 
         internal void Show(float x, float y)
         {
             this.WindowRect.x = x;
             this.WindowRect.y = y;
-            this.Visible = true;
-        }
 
-        internal void hide()
-        {
-            this.Visible = false;
+            Show();
         }
+        
 
         /// <summary>
         /// Awake Event - when the DLL is loaded 
@@ -60,7 +53,7 @@ namespace KeepFit
 
             this.Log_DebugOnly("Awake", ".");
 
-            this.Visible = false;
+            this.Hide();
             this.DragEnabled = true;
             this.TooltipsEnabled = true;
 

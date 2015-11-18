@@ -16,7 +16,7 @@ namespace KeepFit
             : base(true, true, "roster")
         {
             this.WindowCaption = "KeepFit Roster";
-            this.Visible = false;
+            this.Hide();
             this.DragEnabled = true;
 
             this.WindowRect = new Rect(0, 0, 300, 300);

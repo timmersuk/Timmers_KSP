@@ -31,7 +31,7 @@ namespace KeepFit
 
             if (showCloseButton && GUI.Button(new Rect(WindowRect.width - 24, 4, 20, 20), "X"))
             {
-                Visible = false;
+                Hide();
             }
 
             if (resizeable)

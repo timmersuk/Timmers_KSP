@@ -14,7 +14,7 @@ namespace KeepFit
             : base(true, true, "config")
         {
             this.WindowCaption = "KeepFit Config";
-            this.Visible = false;
+            this.Hide();
             this.DragEnabled = true;
             
             this.WindowRect = new Rect(0, 0, 400, 300);

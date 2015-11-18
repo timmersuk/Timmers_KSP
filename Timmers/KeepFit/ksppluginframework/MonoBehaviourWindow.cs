@@ -17,7 +17,7 @@ public abstract class MonoBehaviourWindow : MonoBehaviourExtended
         : base()
     {
         this.WindowID = UnityEngine.Random.Range(1000, 2000000);
-        this._Visible = false;
+        this.Hide();
         LogFormatted_DebugOnly("WindowID:{0}", WindowID);
     }
     ///CANT USE THE ONES BELOW HERE AS WE NEED TO INSTANTIATE THE WINDOW USING AddComponent()
@@ -91,26 +91,32 @@ public abstract class MonoBehaviourWindow : MonoBehaviourExtended
     /// </summary>
     internal RectOffset ClampToScreenOffset = new RectOffset(0, 0, 0, 0);
 
-    private Boolean _Visible;
-    /// <summary>
-    /// Whether the Window is visible or not. Changing this value will add/remove the window from the RenderingManager.PostDrawQueue
-    /// </summary>
-    internal Boolean Visible
+    private bool Visible;
+
+    public bool isVisible()
     {
-        get { return _Visible; }
-        set
+        return Visible;
+    }
+
+    public void Show()
+    {
+        if (!Visible)
         {
-            _Visible = value;
-            if (_Visible)
-            {
-                LogFormatted_DebugOnly("Adding Window to PostDrawQueue-{0}", WindowID);
-                RenderingManager.AddToPostDrawQueue(5, this.DrawGUI);
-            }
-            else
-            {
-                LogFormatted_DebugOnly("Removing Window from PostDrawQueue", WindowID);
-                RenderingManager.RemoveFromPostDrawQueue(5, this.DrawGUI);
-            }
+            Visible = true;
+
+            LogFormatted_DebugOnly("Adding Window to PostDrawQueue-{0}", WindowID);
+            RenderingManager.AddToPostDrawQueue(5, this.DrawGUI);
+        }
+    }
+
+    public void Hide()
+    {
+        if (Visible)
+        {
+            Visible = false;
+
+            LogFormatted_DebugOnly("Removing Window from PostDrawQueue", WindowID);
+            RenderingManager.RemoveFromPostDrawQueue(5, this.DrawGUI);
         }
     }
 

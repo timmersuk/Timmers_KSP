@@ -242,8 +242,9 @@ namespace KeepFit
 
         public void ShowSettings()
         {
-            this.configWindow.Visible = true;
+            this.configWindow.Show();
         }
+
         public bool isVesselLandedOnExercisableSurface(Vessel vessel)
         {
             return (vessel != null && vessel.LandedOrSplashed && vessel.geeForce < gameConfig.minimumLandedGeeForExcercising);
@@ -295,7 +296,7 @@ namespace KeepFit
         private void showKeepFitWindow()
         {
             /*Your code goes in here for if it gets enabled*/
-            mainWindow.Visible = true;
+            mainWindow.Show();
         }
 
         void onAppLaunchDisable() 
@@ -307,7 +308,7 @@ namespace KeepFit
 
         private void hideKeepFitMainWindow()
         {
-            this.mainWindow.Visible = false;
+            this.mainWindow.Hide();
         }
 
         public override void OnLoad(ConfigNode gameNode)
