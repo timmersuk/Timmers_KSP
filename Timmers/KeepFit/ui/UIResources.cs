@@ -174,6 +174,12 @@ namespace KeepFit
         private void InitStyles()
         {
             this.Log_DebugOnly("InitStyles", "Initializing Styles");
+            
+            if (SkinsLibrary.CurrentSkin == null)
+            {
+                this.Log_DebugOnly("InitStyles", "SkinsLibrary.CurrentSkin == null");
+            }
+            
 
             styleButton = new GUIStyle(SkinsLibrary.CurrentSkin.button);
             styleButton.normal.textColor = new Color(207, 207, 207);
