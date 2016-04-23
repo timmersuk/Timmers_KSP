@@ -33,20 +33,25 @@ namespace KeepFit
             }
             else
             {
+                this.Log_DebugOnly("Start", "Scenario module already exists.");
                 if (!psm.targetScenes.Any(s => s == GameScenes.SPACECENTER))
                 {
+                    this.Log_DebugOnly("Start", "Adding target scene SPACECENTER to scenario module target scenes.");
                     psm.targetScenes.Add(GameScenes.SPACECENTER);
                 }
                 if (!psm.targetScenes.Any(s => s == GameScenes.TRACKSTATION))
                 {
+                    this.Log_DebugOnly("Start", "Adding target scene TRACKSTATION to scenario module target scenes.");
                     psm.targetScenes.Add(GameScenes.TRACKSTATION);
                 }
                 if (!psm.targetScenes.Any(s => s == GameScenes.FLIGHT))
                 {
+                    this.Log_DebugOnly("Start", "Adding target scene FLIGHT to scenario module target scenes.");
                     psm.targetScenes.Add(GameScenes.FLIGHT);
                 }
                 if (!psm.targetScenes.Any(s => s == GameScenes.EDITOR))
                 {
+                    this.Log_DebugOnly("Start", "Adding target scene EDITOR to scenario module target scenes.");
                     psm.targetScenes.Add(GameScenes.EDITOR);
                 }
             }
@@ -351,30 +356,81 @@ namespace KeepFit
         void OnDestroy()
         {
             this.Log_DebugOnly("OnDestroy", ".");
-            if (appLauncherButton != null)
+            if (appLauncherButton == null)
             {
+                this.Log_DebugOnly("OnDestroy", "No appLauncher button to remove.");
+            }
+            else
+            {
+                this.Log_DebugOnly("OnDestroy", "Removing appLauncher button.");
                 ApplicationLauncher.Instance.DisableMutuallyExclusive(appLauncherButton);
                 ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
                 appLauncherButton = null;
             }
 
-            if (this.crewFitnessController != null)
+            if (this.crewFitnessController == null)
             {
+                this.Log_DebugOnly("OnDestroy", "No crewFitness controller to destroy.");
+            }
+            else
+            {
+                this.Log_DebugOnly("OnDestroy", "Destroying crewFitness controller.");
                 Destroy(crewFitnessController);
                 crewFitnessController = null;
             }
 
-            if (this.crewRosterController != null)
+            if (this.crewRosterController == null)
             {
+                this.Log_DebugOnly("OnDestroy", "No crewRoster controller to destroy.");
+            }
+            else
+            {
+                this.Log_DebugOnly("OnDestroy", "Destroying crewRoster controller.");
                 Destroy(crewRosterController);
                 crewRosterController = null;
             }
 
-            if (this.geeEffectsController != null)
+            if (this.geeEffectsController == null)
             {
+                this.Log_DebugOnly("OnDestroy", "No geeEffects controller to destroy.");
+            }
+            else
+            {
+                this.Log_DebugOnly("OnDestroy", "Destroying geeEffects controller.");
                 Destroy(geeEffectsController);
                 geeEffectsController = null;
             }
+
+            if (mainWindow != null)
+            {
+                Destroy(mainWindow);
+                mainWindow = null;
+            }
+
+            if (logWindow != null)
+            {
+                Destroy(logWindow);
+                logWindow = null;
+            }
+
+            if (configWindow != null)
+            {
+                Destroy(configWindow);
+                configWindow = null;
+            }
+
+            if (rosterWindow != null)
+            {
+                Destroy(rosterWindow);
+                rosterWindow = null;
+            }
+
+            if (allVesselsWindow == null)
+            {
+                Destroy(allVesselsWindow);
+                allVesselsWindow = null;
+            }
+
         }
     }
 }
