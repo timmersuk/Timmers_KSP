@@ -112,22 +112,28 @@ namespace KeepFit
             geeTolerances = GetDefaultGeeTolerances();
         }
 
-        public void validate()
+        public bool validate()
         {
+            bool modified = false;
             if (maxFitnessLevel < minFitnessLevel)
             {
+                modified = true;
                 maxFitnessLevel = minFitnessLevel;
             }
 
             if (initialFitnessLevel > maxFitnessLevel)
             {
+                modified = true;
                 initialFitnessLevel = maxFitnessLevel;
             }
 
             if (initialFitnessLevel < minFitnessLevel)
             {
+                modified = true;
                 initialFitnessLevel = minFitnessLevel;
             }
+
+            return modified;
         }
 
         public void SetWindowRect(string name, Rect value)
