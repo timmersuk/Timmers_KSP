@@ -10,6 +10,25 @@ namespace KeepFit
     {
         KeepFitScenarioModule scenarioModule;
 
+        internal class WipValue
+        {
+            internal string value = null;
+            internal bool valid = false;
+        }
+
+        internal class WipValuePair
+        {
+            internal WipValue one = new WipValue();
+            internal WipValue two = new WipValue();
+        }
+
+
+        WipValue wipMinimumLandedGeeForExcercising = new WipValue();
+        WipValue wipInitialFitnessLevel = new WipValue();
+        WipValue wipMinFitnessLevel = new WipValue();
+        WipValue wipMaxFitnessLevel = new WipValue();
+        internal Dictionary<Period, WipValuePair> wipGeeTolerances = new Dictionary<Period, WipValuePair>();
+
         public ConfigWindow()
             : base(true, true, "config")
         {
@@ -18,6 +37,11 @@ namespace KeepFit
             this.DragEnabled = true;
             
             this.WindowRect = new Rect(0, 0, 400, 300);
+
+            foreach (Period period in Enum.GetValues(typeof(Period)))
+            {
+                wipGeeTolerances[period] = new WipValuePair();
+            }
         }
 
         internal void Init(KeepFitScenarioModule scenarioModule)
@@ -58,58 +82,58 @@ namespace KeepFit
                 config.applyCLSLimitsIfAvailable = GUILayout.Toggle(config.applyCLSLimitsIfAvailable, "Apply CLS limits: ", GUILayout.Width(80));
             }
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Min Gee For Exercising when Landed: " + config.minimumLandedGeeForExcercising);
-            GUILayout.FlexibleSpace();
-            // TODO - need a float editor widget here for minimumLandedGeeForExcercising
-            GUILayout.EndHorizontal();
+            showFloatEditor("Min Gee For Exercising when Landed", ref wipMinimumLandedGeeForExcercising, ref config.minimumLandedGeeForExcercising, ref config, true);
+            showFloatEditor("Initial fitness level", ref wipInitialFitnessLevel, ref config.initialFitnessLevel, ref config, true);
+            showFloatEditor("Min fitness level", ref wipMinFitnessLevel, ref config.minFitnessLevel, ref config, true);
+            showFloatEditor("Max fitness level", ref wipMaxFitnessLevel, ref config.maxFitnessLevel, ref config, true);
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Initial fitness level:" + config.initialFitnessLevel.ToString());
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("+5", GUILayout.Width(80)))
-            {
-                config.initialFitnessLevel += 5;
-                config.validate();
-            }
-            if (GUILayout.Button("-5", GUILayout.Width(80)))
-            {
-                config.initialFitnessLevel -= 5;
-                config.validate();
-            }
-            GUILayout.EndHorizontal();
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Min fitness level:" + config.minFitnessLevel.ToString());
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("+5", GUILayout.Width(80)))
+            foreach (Period period in Enum.GetValues(typeof(Period)))
             {
-                config.minFitnessLevel += 5;
-                config.validate();
+                GeeToleranceConfig geeToleranceConfig = config.GetGeeTolerance(period);
+                WipValuePair wipValuePair = wipGeeTolerances[period];
+                showFloatPairEditor("Tolerance (" + period + ")", "Warn", "Fatal", ref wipValuePair, ref geeToleranceConfig.warn, ref geeToleranceConfig.fatal, ref config);
             }
-            if (GUILayout.Button("-5", GUILayout.Width(80)))
-            {
-                config.minFitnessLevel -= 5;
-                config.validate();
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Max fitness level:" + config.maxFitnessLevel.ToString());
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("+5", GUILayout.Width(80)))
-            {
-                config.maxFitnessLevel += 5;
-                config.validate();
-            }
-            if (GUILayout.Button("-5", GUILayout.Width(80)))
-            {
-                config.maxFitnessLevel -= 5;
-                config.validate();
-            }
-            GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
+        }
+
+        private void showFloatEditor(string text, ref WipValue wipValue, ref float value, ref GameConfig config, bool ownHoriztonal)
+        {
+            if (ownHoriztonal) GUILayout.BeginHorizontal();
+            GUILayout.Label(text + " : " + ((!wipValue.valid && wipValue.value != null) ? "(" + value + ")" : ""));
+            if (ownHoriztonal) GUILayout.FlexibleSpace();
+
+            if (wipValue.value == null)
+            {
+                wipValue.value = value.ToString();
+            }
+            wipValue.value = GUILayout.TextField(wipValue.value, GUILayout.Width(40));
+
+            float tempValue;
+            wipValue.valid = float.TryParse(wipValue.value, out tempValue);
+
+            if (ownHoriztonal) GUILayout.EndHorizontal();
+
+            if (wipValue.valid)
+            {
+                value = tempValue;
+                if (config.validate())
+                {
+                    wipValue.value = null;
+                }
+            }
+        }
+
+
+        private void showFloatPairEditor(string text, string text1, string text2, ref WipValuePair wipValuePair, ref float value1, ref float value2, ref GameConfig config)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(text + " : ");
+            GUILayout.FlexibleSpace();
+            showFloatEditor(text1, ref wipValuePair.one, ref value1, ref config, false);
+            showFloatEditor(text2, ref wipValuePair.two, ref value2, ref config, false);
+            GUILayout.EndHorizontal();
         }
     }
 }

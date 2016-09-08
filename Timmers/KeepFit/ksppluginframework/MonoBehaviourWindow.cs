@@ -100,23 +100,23 @@ public abstract class MonoBehaviourWindow : MonoBehaviourExtended
 
     public void Show()
     {
-        if (!Visible)
-        {
-            Visible = true;
-
-            LogFormatted_DebugOnly("Adding Window to PostDrawQueue-{0}", WindowID);
-            RenderingManager.AddToPostDrawQueue(5, this.DrawGUI);
-        }
+        Visible = true;
     }
 
     public void Hide()
     {
+        Visible = false;
+    }
+
+    override internal void OnGUIEvery()
+    {
         if (Visible)
         {
-            Visible = false;
-
-            LogFormatted_DebugOnly("Removing Window from PostDrawQueue", WindowID);
-            RenderingManager.RemoveFromPostDrawQueue(5, this.DrawGUI);
+            if (Event.current.type == EventType.Repaint || Event.current.isMouse)
+            {
+                //myPreDrawQueue(); // Your current on preDrawQueue code
+            }
+            DrawGUI(); // Your current on postDrawQueue code
         }
     }
 

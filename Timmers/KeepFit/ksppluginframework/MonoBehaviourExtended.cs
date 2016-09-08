@@ -319,7 +319,8 @@ public abstract class MonoBehaviourExtended : MonoBehaviour
     private void OnGUI()
     {
         if (!_OnGUIOnceOnlyHasRun)
-        {
+        { 
+            LogFormatted_DebugOnly("Running _OnGUIOnceOnlyHasRun initializations");
             //set theflag so this only runs once
             _OnGUIOnceOnlyHasRun = true;
             //set up the skins library
