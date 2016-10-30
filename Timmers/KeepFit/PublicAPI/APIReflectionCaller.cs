@@ -60,9 +60,14 @@ namespace ksp_intermod_api
 		/// </param>
 		/// <returns></returns>
 		protected static object findImplementation(object caller, string implementationName) {
-			Type type = AssemblyLoader.loadedAssemblies
-				.SelectMany(a => a.assembly.GetExportedTypes())
-				.SingleOrDefault(t => t.FullName.Equals(implementationName));
+			Type type = null;
+			AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+			{
+				if (t.FullName.Equals(implementationName))
+				{
+					type = t;
+				}
+			});
 			if (type == null) {
 				return (object)null;
 			}

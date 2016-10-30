@@ -13,7 +13,14 @@ namespace KeepFit
 
         public static ConnectedLivingSpace.ICLSAddon GetCLS()
         {
-            Type CLSAddonType = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetExportedTypes()).SingleOrDefault(t => t.FullName == "ConnectedLivingSpace.CLSAddon");
+			Type CLSAddonType = null;
+			AssemblyLoader.loadedAssemblies.TypeOperation(t =>
+			{
+				if (t.FullName == "ConnectedLivingSpace.CLSAddon")
+				{
+					CLSAddonType = t;
+				}
+			});
             if (CLSAddonType != null)
             {
                 object realCLSAddon = CLSAddonType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
