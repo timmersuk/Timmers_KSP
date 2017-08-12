@@ -159,7 +159,7 @@ namespace KeepFit
             else
             {
                 this.Log_DebugOnly("OnAwake", "Adding AppLauncher button");
-            
+
                 Texture toolbarButtonTexture = (Texture)GameDatabase.Instance.GetTexture("KeepFit/KeepFit", false);
                 ApplicationLauncher.AppScenes scenes = ApplicationLauncher.AppScenes.FLIGHT |
                                                        ApplicationLauncher.AppScenes.MAPVIEW |

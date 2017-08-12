@@ -1,1 +1,0 @@
-copy /y %buildFolder%\temp\KeepFit\Timmers_KeepFit.zip %OUTFOLDER%

@@ -25,7 +25,7 @@
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Games\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\KSP_x64_Data_v130\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="CLSInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -44,7 +44,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>C:\Games\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\KSP_x64_Data_v130\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\KSP_x64_Data_v130\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -88,42 +91,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>DEL "$(TargetDir)Assembly-CSharp.dll" 
-DEL "$(TargetDir)Assembly-CSharp.xml" 
-rem DEL "$(TargetDir)KeepFit.pdb" 
-DEL "$(TargetDir)UnityEngine.dll" 
-DEL "$(TargetDir)UnityEngine.xml" 
-
-
-xcopy /s /f /y $(ProjectDir)\GameData GameData\
-
-call "C:\Program Files (x86)\Mono\bin\pdb2mdb.bat" "$(TargetDir)$(TargetFileName)"
-
-
-
-dir
-copy /y $(ProjectDir)..\..\LICENSE.txt GameData\KeepFit
-copy /y $(ProjectDir)..\..\NOTICE.txt GameData\KeepFit
-copy /y $(ProjectDir)..\..\Readme.md GameData\KeepFit
-copy /y $(TargetDir)$(ProjectName).dll GameData\KeepFit
-copy /y $(TargetDir)$(TargetFileName).mdb GameData\$(ProjectName)\
-
-"C:\Program Files\7-Zip\7z" a -tzip KeepFit.zip GameData
-copy KeepFit.zip $(ProjectDir)\..\..\
-
-IF EXIST "$(ProjectDir)..\..\KSP_TEST" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST\GameData"
-IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST\GameData\$(ProjectName)\$(ProjectName).dll"
-IF EXIST "$(ProjectDir)..\..\KSP_TEST" copy /Y "$(TargetDir)$(ProjectName).dll.mdb" "$(ProjectDir)..\..\KSP_TEST\GameData\$(ProjectName)\$(ProjectName).dll.mdb"
-
-IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" xcopy /s /f /y $(ProjectDir)\GameData "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData"
-IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\$(ProjectName)\$(ProjectName).dll"
-IF EXIST "$(ProjectDir)..\..\KSP_TEST_STRIPPED" copy /Y "$(TargetDir)$(ProjectName).dll.mdb" "$(ProjectDir)..\..\KSP_TEST_STRIPPED\GameData\$(ProjectName)\$(ProjectName).dll.mdb"
-
-IF EXIST "C:\Games\Steam\SteamApps\common\Kerbal Space Program" xcopy /s /f /y $(ProjectDir)\GameData "C:\Games\Steam\SteamApps\common\Kerbal Space Program\GameData"
-IF EXIST "C:\Games\Steam\SteamApps\common\Kerbal Space Program" copy /Y "$(TargetDir)$(ProjectName).dll" "C:\Games\Steam\SteamApps\common\Kerbal Space Program\GameData\$(ProjectName)\$(ProjectName).dll"
-IF EXIST "C:\Games\Steam\SteamApps\common\Kerbal Space Program" copy /Y "$(TargetDir)$(ProjectName).dll.mdb" "C:\Games\Steam\SteamApps\common\Kerbal Space Program\GameData\$(ProjectName)\$(ProjectName).dll.mdb"
-
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
