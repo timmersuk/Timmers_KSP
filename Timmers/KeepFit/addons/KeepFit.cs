@@ -66,6 +66,8 @@ namespace KeepFit
         /// AppLauncher button
         /// </summary>
         private ApplicationLauncherButton appLauncherButton;
+        private IButton toolmodLauncherButton;
+        private bool toolmodToggleCurrentlyOn;
 
 
         private MainWindow mainWindow;
@@ -105,6 +107,15 @@ namespace KeepFit
             gameConfig = new GameConfig();
             
             keepFitAPIImplementation.setGameConfig(gameConfig);
+        }
+
+        public void toolmodButtonToggle()
+        {
+            if (this.toolmodToggleCurrentlyOn)
+                onAppLaunchToggleOff();
+            else
+                onAppLaunchToggleOn();
+            this.toolmodToggleCurrentlyOn = !this.toolmodToggleCurrentlyOn;
         }
 
         public override void OnAwake()
@@ -162,10 +173,10 @@ namespace KeepFit
 
                 Texture toolbarButtonTexture = (Texture)GameDatabase.Instance.GetTexture("KeepFit/KeepFit", false);
                 ApplicationLauncher.AppScenes scenes = ApplicationLauncher.AppScenes.FLIGHT |
-                                                       ApplicationLauncher.AppScenes.MAPVIEW |
+                                                       //ApplicationLauncher.AppScenes.MAPVIEW |
                                                        ApplicationLauncher.AppScenes.SPACECENTER |
-                                                       ApplicationLauncher.AppScenes.SPH |
-                                                       ApplicationLauncher.AppScenes.VAB |
+                                                       //ApplicationLauncher.AppScenes.SPH |
+                                                       //ApplicationLauncher.AppScenes.VAB |
                                                        ApplicationLauncher.AppScenes.TRACKSTATION;
 
                 appLauncherButton = ApplicationLauncher.Instance.AddModApplication(onAppLaunchToggleOn,
@@ -177,6 +188,20 @@ namespace KeepFit
                                                                scenes,
                                                                toolbarButtonTexture);
                 ApplicationLauncher.Instance.AddOnRepositionCallback(onAppLauncherReposition);
+
+                if (ToolbarManager.ToolbarAvailable && ToolbarManager.Instance != null)
+                {
+                    this.Log_DebugOnly("OnAwake", "Adding Toolbar Button");
+                    this.toolmodLauncherButton = ToolbarManager.Instance.add("KeepFit", "MainButton");
+                    if (this.toolmodLauncherButton != null)
+                    {
+                        appLauncherButton.VisibleInScenes = scenes; // TODO
+                        this.toolmodLauncherButton.Visibility = new GameScenesVisibility(new GameScenes[] { GameScenes.SPACECENTER, GameScenes.EDITOR, GameScenes.FLIGHT, GameScenes.TRACKSTATION });
+                        this.toolmodLauncherButton.TexturePath = "KeepFit/UIResources/KeepFit";
+                        this.toolmodLauncherButton.ToolTip = "KeepFit Toolbar";
+                        this.toolmodLauncherButton.OnClick += ((e) => this.toolmodButtonToggle());
+                    }
+                }
             }
 
 
@@ -367,6 +392,13 @@ namespace KeepFit
                 ApplicationLauncher.Instance.RemoveModApplication(appLauncherButton);
                 appLauncherButton = null;
             }
+            
+            if (toolmodLauncherButton != null)
+            {
+                toolmodLauncherButton.Destroy(); 
+                toolmodLauncherButton = null;
+            }
+            
 
             if (this.crewFitnessController == null)
             {

@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="addons\InstallChecker.cs" />
+    <Compile Include="addons\ToolbarWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="ui\KeepFitInfoWindow.cs" />
