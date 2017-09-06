@@ -172,9 +172,13 @@ namespace KeepFit
 
                 // first line - crewmember name
                 GUILayout.BeginHorizontal();
+                GUILayout.Space(2); // RODHERN
                 GUILayout.Label(crewMember.Name + "(" + (crewMember.loaded ? "loaded" : "generated") + ")", uiResources.styleCrewName);
                 DrawExperienceTrait(crewMember);
-                DrawActivityLevel(crewMember.activityLevel);
+                if (crewMember.activityLevel == ActivityLevel.EXERCISING && crewMember.fitnessLevel >= gameConfig.initialFitnessLevel)
+                    DrawActivityLevel(ActivityLevel.NEUTRAL);
+                else
+                    DrawActivityLevel(crewMember.activityLevel);
                 GUILayout.FlexibleSpace();
                 if (!showAllCrewExpanded && DrawChevron(expanded))
                 {

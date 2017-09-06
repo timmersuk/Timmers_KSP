@@ -22,7 +22,8 @@ namespace KeepFit
             {
                 Uri kspApplicationRootPathUri = new Uri(Path.GetFullPath(KSPUtil.ApplicationRootPath));
                 var badPaths = assemblies.Select(a => a.path).Select(p => Uri.UnescapeDataString(kspApplicationRootPathUri.MakeRelativeUri(new Uri(p)).ToString().Replace('/', Path.DirectorySeparatorChar)));
-                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "Incorrect KeepFit Installation",
+                PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), "KeepFitInstallChecker",
+                    "Incorrect KeepFit Installation",
                     "KeepFit has been installed incorrectly and will not function properly. " +
                     "All KeepFit files should be located in KSP/GameData/KeepFit. " +
                     "Do not move any files from inside the KeepFit folder.\n\nIncorrect path(s):\n" + String.Join("\n", badPaths.ToArray()),

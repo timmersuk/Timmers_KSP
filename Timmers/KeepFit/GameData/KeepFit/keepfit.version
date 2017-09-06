@@ -3,8 +3,8 @@
 	"URL":"https://raw.githubusercontent.com/timmersuk/Timmers_KSP/master/Timmers/KeepFit/GameData/Timmers/KeepFit/keepfit.version",
 	"DOWNLOAD":"https://github.com/timmersuk/Timmers_KSP/releases",
 	"CHANGE_LOG_URL":"https://github.com/timmersuk/Timmers_KSP/commits/master",
-	"VERSION":{"MAJOR":0,"MINOR":11,"PATCH":9,"BUILD":8},
-	"KSP_VERSION":{"MAJOR":1,"MINOR":2,"PATCH":0},
-	"KSP_VERSION_MIN":{"MAJOR":1,"MINOR":2,"PATCH":0},
-	"KSP_VERSION_MAX":{"MAJOR":1,"MINOR":2,"PATCH":0}
+	"VERSION":{"MAJOR":0,"MINOR":12,"PATCH":0,"BUILD":2},
+	"KSP_VERSION":{"MAJOR":1,"MINOR":3,"PATCH":0},
+	"KSP_VERSION_MIN":{"MAJOR":1,"MINOR":3,"PATCH":0},
+	"KSP_VERSION_MAX":{"MAJOR":1,"MINOR":3,"PATCH":1}
 }
