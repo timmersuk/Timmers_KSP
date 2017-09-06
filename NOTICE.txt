@@ -49,4 +49,7 @@ project is in no way associated with nor endorsed by Squad.
 
 8. Certain portions of UI code inspired/adapted from original code in KSP Alternate Resource Panel by Trigger AU, licensed as Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
+9. The toolbar addon is copyright (c) 2013-2016, Maik Schreiber.
+
+10. Some adaptations by Robert Nielsen (2015-2017).
 
