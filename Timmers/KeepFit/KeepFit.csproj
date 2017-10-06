@@ -33,21 +33,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\KSP_x64_Data_v130\Managed\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CLSInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>GameData\KeepFit\CLSInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\KSP_x64_Data_v130\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\KSP_x64_Data_v131\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\KSP_x64_Data_v130\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\KSP_x64_Data_v131\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\KSP_x64_Data_v131\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CLSInterfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>GameData\KeepFit\CLSInterfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
