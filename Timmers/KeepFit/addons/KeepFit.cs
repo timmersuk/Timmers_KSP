@@ -319,9 +319,9 @@ namespace KeepFit
         
         void onAppLaunchEnable() 
         {
-            this.Log_DebugOnly("onAppLaunchEnable", "LaunchEnable called - showing window for scene");
+            this.Log_DebugOnly("onAppLaunchEnable", "LaunchEnable called - ignoring call");//showing window for scene");
 
-            showKeepFitWindow();
+            // showKeepFitWindow();
         }
 
         private void showKeepFitWindow()
@@ -332,9 +332,9 @@ namespace KeepFit
 
         void onAppLaunchDisable() 
         {
-            this.Log_DebugOnly("onAppLaunchDisable", "LaunchDisable called - hiding windows");
+            this.Log_DebugOnly("onAppLaunchDisable", "LaunchDisable called - ignoring call");//hiding windows");
 
-            hideKeepFitMainWindow();
+            // hideKeepFitMainWindow();
         }
 
         private void hideKeepFitMainWindow()
