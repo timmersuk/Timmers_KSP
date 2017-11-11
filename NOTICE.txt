@@ -2,14 +2,12 @@ Keep Fit
 Copyright 2014 Tim Darby
 
 
-
-
 Notices :-
 
-1. I am not  lawyer.
+1. I am not a lawyer.
 
-2. Kerbal Space Program is Copyright (C) 2013 Squad. See http://kerbalspaceprogram.com/. This
-project is in no way associated with nor endorsed by Squad.
+2. Kerbal Space Program is Copyright (C) 2013 Squad. See http://kerbalspaceprogram.com/.
+ - This project is in no way associated with nor endorsed by Squad.
 
 3. Installation checking code from an original by Majiir (http://forum.kerbalspaceprogram.com/threads/65395-Voluntarily-Locking-Plugins-to-a-Particular-KSP-Version?p=899895&viewfull=1#post899895)
  - Majiir's installation checking code is public domain released as public domain under CC0 Public Domain Dedication (http://creativecommons.org/publicdomain/zero/1.0/)
@@ -49,7 +47,9 @@ project is in no way associated with nor endorsed by Squad.
 
 8. Certain portions of UI code inspired/adapted from original code in KSP Alternate Resource Panel by Trigger AU, licensed as Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
-9. The toolbar addon is copyright (c) 2013-2016, Maik Schreiber.
+9. Certain portions of the code (CLSInterfaces) is from Connected Living Space, licensed as CC-BY-NC-CA 4.0.
 
-10. Some adaptations by Robert Nielsen (2015-2017).
+10. The toolbar addon is copyright (c) 2013-2016, Maik Schreiber.
+
+11. Some adaptations by Robert Nielsen (2015-2017).
 
