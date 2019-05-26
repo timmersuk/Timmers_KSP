@@ -47,26 +47,12 @@ namespace KeepFit
         /// <param name="geeLoading"></param>
         /// <param name="elapsedSeconds"></param>
         /// <returns>True if the mean has rolled over</returns>
-        internal bool AccumulateGeeLoading(float geeLoading, float elapsedSeconds, out float meanG)
+        internal bool AccumulateGeeLoading(float geeLoading, out float meanG)
         {
-            // turn the gee loading into geeseconds accum and accumulate into the current buffer
-            currentGeeSecondsAccum += (geeLoading * elapsedSeconds);
-            currentGeeSecondsElapsed += elapsedSeconds;
-
-            // if the sum in currentSeconds > the size limit, then propagate it and clear down the current.
-            if (currentGeeSecondsElapsed > accumPeriodSeconds)
-            {
-                lastGeeMeanPerSecond = currentGeeSecondsAccum / currentGeeSecondsElapsed;
-                lastValueValid = true;
-                currentGeeSecondsAccum = 0;
-                currentGeeSecondsElapsed = 0;
-
-                meanG = lastGeeMeanPerSecond;
-                return true;
-            }
-
-            meanG = 0;
-            return false;
+            lastGeeMeanPerSecond = geeLoading;
+            meanG = lastGeeMeanPerSecond;
+            lastValueValid = true;
+            return true;
         }
 
         internal float GetLastGeeMeanPerSecond()

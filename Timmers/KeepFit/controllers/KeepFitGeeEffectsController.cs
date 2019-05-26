@@ -12,12 +12,13 @@ namespace KeepFit
     public class KeepFitGeeEffectsController : KeepFitController
     {
         private double lastGeeLoadingUpdateUT = -1;
-		private G_Effects.GEffectsAPI gEffectsAPI = new G_Effects.GEffectsAPI();
+		private List<float> gHistory = new List<float>();
+        private float gStart = 0;
+        internal Dictionary<Period, float> gLoads = new Dictionary<Period, float>();
 
-		internal override void Init(KeepFitScenarioModule module)
+        internal override void Init(KeepFitScenarioModule module)
 		{
 			base.Init(module);
-			gEffectsAPI.initialize();
 		}		
 
         internal void Awake()
@@ -44,22 +45,6 @@ namespace KeepFit
                 return;
             }
 
-            if (lastGeeLoadingUpdateUT == -1)
-            {
-                this.Log_DebugOnly("FixedUpdate", "No lastGeeLoadingUpdateUT - skipping this update");
-
-                // don't do anything this time
-                this.lastGeeLoadingUpdateUT = Planetarium.GetUniversalTime();
-                return;
-            }
-
-            double currentUT = Planetarium.GetUniversalTime();
-            float elapsedSeconds = (float)(currentUT - lastGeeLoadingUpdateUT);
-            lastGeeLoadingUpdateUT = currentUT;
-
-            // too spammy
-            //this.Log_DebugOnly("FixedUpdate", "[{0}] seconds since last fixed update", elapsedSeconds);
-
             // just check gee loading on active vessel for now
             Vessel vessel = FlightGlobals.ActiveVessel;
             if (vessel == null)
@@ -67,6 +52,32 @@ namespace KeepFit
                 this.Log_DebugOnly("FixedUpdate", "No active vessel");
                 return;
             }
+
+            if (lastGeeLoadingUpdateUT == -1)
+            {
+                this.Log_DebugOnly("FixedUpdate", "No lastGeeLoadingUpdateUT - skipping this update");
+
+                if (vessel.situation == Vessel.Situations.LANDED || vessel.situation == Vessel.Situations.SPLASHED || vessel.situation == Vessel.Situations.PRELAUNCH)
+                    gStart = (float)vessel.mainBody.GeeASL;
+                else
+                    gStart = 0;
+
+                gHistory = Enumerable.Repeat(gStart, 300).ToList();
+                gLoads[Period.Inst] = gStart;
+                gLoads[Period.Short] = gStart;
+                gLoads[Period.Medium] = gStart;
+                gLoads[Period.Long] = gStart;
+
+                // don't do anything this time
+                this.lastGeeLoadingUpdateUT = Planetarium.GetUniversalTime();
+                return;
+            }
+
+            
+            
+
+            // too spammy
+            //this.Log_DebugOnly("FixedUpdate", "[{0}] seconds since last fixed update", elapsedSeconds);
 
             // too spammy
             //this.Log_DebugOnly("FixedUpdate", "Checking gee loading for active vessel[{0}]", vessel.GetName());
@@ -83,6 +94,26 @@ namespace KeepFit
                 // too spammy
                 //this.Log_DebugOnly("FixedUpdate", "Gee loading for active vessel[{0}] is[{1}] letting the crew know", vessel.GetName(), geeLoading);
 
+
+                double currentUT = Planetarium.GetUniversalTime();
+
+                float elapsedSeconds = (float)(currentUT - lastGeeLoadingUpdateUT);
+
+                if (elapsedSeconds >= 1)
+                {
+                    lastGeeLoadingUpdateUT = currentUT;
+
+                    gHistory.RemoveAt(299);
+                    gHistory.Insert(0, geeLoading);
+
+                    gLoads[Period.Inst] = geeLoading;
+                    gLoads[Period.Short] = gHistory.GetRange(0,5).Average();
+                    gLoads[Period.Medium] = gHistory.GetRange(0, 60).Average();
+                    gLoads[Period.Long] = gHistory.Average();
+                }
+
+                
+
                 foreach (ProtoCrewMember crewMember in vessel.GetVesselCrew())
                 {
                     try
@@ -92,7 +123,7 @@ namespace KeepFit
 
                         KeepFitCrewMember keepFitCrewMember = gameConfig.roster.crew[crewMember.name];
 
-                        handleGeeLoadingUpdates(keepFitCrewMember, geeLoading, elapsedSeconds);
+                        handleGeeLoadingUpdates(keepFitCrewMember, gLoads);
                     }
                     catch (KeyNotFoundException)
                     {
@@ -110,8 +141,7 @@ namespace KeepFit
         
         
         private void handleGeeLoadingUpdates(KeepFitCrewMember crew, 
-                                            float gee, 
-                                            float duration)
+                                            Dictionary<Period,float> gee)
         {
             // modify the 'experienced' gee based on the crew member's fitness relative to the start state
             float healthGeeToleranceModifier = crew.fitnessLevel / gameConfig.initialFitnessLevel;
@@ -120,19 +150,17 @@ namespace KeepFit
             foreach (Period period in Enum.GetValues(typeof(Period)))
             {
                 GeeToleranceConfig tolerance;
+                gameConfig.geeTolerances.TryGetValue(period, out tolerance);
                 GeeLoadingAccumulator accum;
                 crew.geeAccums.TryGetValue(period, out accum);
-                gameConfig.geeTolerances.TryGetValue(period, out tolerance);
 
                 if (tolerance != null && accum != null)
                 {
-                	if (! tryHandleWithGEffectsMod(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier)) {
-	                    GeeLoadingOutCome outcome = handleGeeLoadingUpdate(crew, gee, duration, accum, tolerance, healthGeeToleranceModifier);
-	                    if (outcome > harshestOutcome)
-	                    {
-	                        harshestOutcome = outcome;
-	                    }
-                	}
+	                GeeLoadingOutCome outcome = handleGeeLoadingUpdate(crew, gee[period], accum, tolerance, healthGeeToleranceModifier);
+	                if (outcome > harshestOutcome)
+	                {
+	                    harshestOutcome = outcome;
+	                }
                 }
             }   
     
@@ -146,43 +174,20 @@ namespace KeepFit
                     break;
             }
         }
-        
-        private bool tryHandleWithGEffectsMod(KeepFitCrewMember crewMember, 
-                                            float geeLoading, 
-                                            float elapsedSeconds, 
-                                            GeeLoadingAccumulator accum, 
-                                            GeeToleranceConfig tolerance,
-                                            float healthGeeToleranceModifier) {
-			if (! gEffectsAPI.isInitialized()) {
-        		return false;
-        	}
-        	double? downwardG = gEffectsAPI.getDownwardG(crewMember.Name);
-			double? forwardG = gEffectsAPI.getForwardG(crewMember.Name);
-			if ((downwardG == null) || (forwardG == null)) {
-				return false;
-			}
-			
-			//The plain (medical) sum of longitudal and lateral G loads is used for G. Also the regular vector module Math.Sqrt(Math.Pow(downwardG, 2) + Math.Pow(upwardG, 2)) may be used.
-			handleGeeLoadingUpdate(crewMember, Math.Abs((float)downwardG) + Math.Abs((float)forwardG), elapsedSeconds, accum, tolerance, healthGeeToleranceModifier);
-			//The outcome is ignored for not displaying warning messages because G-Effects mod has enough visual warnings itself  
-			return true;        	
-        }
 
-        private GeeLoadingOutCome handleGeeLoadingUpdate(KeepFitCrewMember crewMember, 
-                                            float geeLoading, 
-                                            float elapsedSeconds, 
-                                            GeeLoadingAccumulator accum, 
+        private GeeLoadingOutCome handleGeeLoadingUpdate(KeepFitCrewMember crewMember,
+                                            float geeLoading,
+                                            GeeLoadingAccumulator accum,
                                             GeeToleranceConfig tolerance,
                                             float healthGeeToleranceModifier)
         {
-            
             float meanG;
-            if (accum.AccumulateGeeLoading(geeLoading, elapsedSeconds, out meanG))
+            if (accum.AccumulateGeeLoading(geeLoading, out meanG))
             {
                 float geeWarn = GeeLoadingCalculator.GetFitnessModifiedGeeTolerance(tolerance.warn, crewMember, gameConfig);
                 float geeFatal = GeeLoadingCalculator.GetFitnessModifiedGeeTolerance(tolerance.fatal, crewMember, gameConfig);
 
-                if (meanG > geeFatal) 
+                if (meanG > geeFatal)
                 {
                     return GeeLoadingOutCome.GeeFatal;
                 }
