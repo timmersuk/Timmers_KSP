@@ -278,7 +278,7 @@ namespace KeepFit
 
         public bool isVesselLandedOnExercisableSurface(Vessel vessel)
         {
-            return (vessel != null && vessel.LandedOrSplashed && vessel.geeForce < gameConfig.minimumLandedGeeForExcercising);
+            return (vessel != null && vessel.LandedOrSplashed && vessel.geeForce > gameConfig.minimumLandedGeeForExcercising);
         }
 
         void onAppLauncherReposition()
