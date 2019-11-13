@@ -10,7 +10,7 @@ namespace KeepFit
     /// <summary>
     /// Part added to modules (command modules?) to allow them to interact with KeepFit directly
     /// </summary>
-    public class KeepFitPartModule  : PartModule
+    public class KeepFitPartModule  : PartModule, IModuleInfo
     {
         private static Dictionary<ActivityLevel, string> infoColorMap;
 
@@ -31,7 +31,7 @@ namespace KeepFit
                 infoColorMap[ActivityLevel.CRAMPED] = "red";
                 infoColorMap[ActivityLevel.COMFY] = "orange";
                 infoColorMap[ActivityLevel.NEUTRAL] = "#00ffffff"; // i.e. cyan
-                infoColorMap[ActivityLevel.EXERCISING] = "lime";
+                infoColorMap[ActivityLevel.EXERCISING] = "#32cd32"; // lime green
             }
 
             initActivityLevel();
@@ -87,14 +87,33 @@ namespace KeepFit
         {
             initActivityLevel();
 
-            if (this.part.CrewCapacity == 0)
-            {
-                return "";
-            }
+            //if (this.part.CrewCapacity == 0)
+            //{
+            //    return "";
+            //}
 
 
             return "Activity Level: <color=" + infoColorMap[activityLevel] + ">" + this.activityLevel.ToString() + "</color>";
         }
 
+        public override string GetModuleDisplayName()
+        {
+            return "KeepFit";
+        }
+
+        public string GetModuleTitle()
+        {
+            return "KeepFit";
+        }
+
+        public Callback<Rect> GetDrawModulePanelCallback()
+        {
+            return null;
+        }
+
+        public string GetPrimaryField()
+        {
+            return this.activityLevel.ToString();
+        }
     }
 }
