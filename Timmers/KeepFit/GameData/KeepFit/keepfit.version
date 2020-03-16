@@ -1,10 +1,9 @@
 {
 	"NAME":"keepfit",
-	"URL":"https://raw.githubusercontent.com/Rodhern/Timmers_KSP/ksp131/Timmers/KeepFit/GameData/KeepFit/keepfit.version",
-	"DOWNLOAD":"https://github.com/Rodhern/Timmers_KSP/releases",
-	"CHANGE_LOG_URL":"https://github.com/Rodhern/Timmers_KSP/commits/ksp131",
-	"VERSION":{"MAJOR":0,"MINOR":12,"PATCH":4,"BUILD":5},
-	"KSP_VERSION":{"MAJOR":1,"MINOR":3,"PATCH":1},
-	"KSP_VERSION_MIN":{"MAJOR":1,"MINOR":3,"PATCH":1},
-	"KSP_VERSION_MAX":{"MAJOR":1,"MINOR":3,"PATCH":1}
+	"URL":"https://raw.githubusercontent.com/Kerbas-ad-astra/Timmers_KSP/master/Timmers/KeepFit/GameData/KeepFit/keepfit.version",
+	"DOWNLOAD":"https://github.com/Kerbas-ad-astra/Timmers_KSP/releases",
+	"VERSION":{"MAJOR":0,"MINOR":13,"PATCH":0,"BUILD":0},
+	"KSP_VERSION":{"MAJOR":1,"MINOR":9,"PATCH":1},
+	"KSP_VERSION_MIN":{"MAJOR":1,"MINOR":9,"PATCH":1},
+	"KSP_VERSION_MAX":{"MAJOR":1,"MINOR":9,"PATCH":1}
 }

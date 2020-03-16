@@ -30,8 +30,8 @@ namespace KeepFit
                 infoColorMap[ActivityLevel.UNKNOWN] = "maroon";
                 infoColorMap[ActivityLevel.CRAMPED] = "red";
                 infoColorMap[ActivityLevel.COMFY] = "orange";
-                infoColorMap[ActivityLevel.NEUTRAL] = "#00ffffff"; // i.e. cyan
-                infoColorMap[ActivityLevel.EXERCISING] = "#32cd32"; // lime green
+                infoColorMap[ActivityLevel.NEUTRAL] = "#32cd32"; // lime green
+                infoColorMap[ActivityLevel.EXERCISING] = "#00ffffff"; // i.e. cyan
             }
 
             initActivityLevel();

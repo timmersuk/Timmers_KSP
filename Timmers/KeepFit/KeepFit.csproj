@@ -37,11 +37,11 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="CLSInterfaces, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -49,41 +49,41 @@
     </Reference>
     <Reference Include="KSPAssets, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\KSPAssets.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\KSPAssets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.8.1 main\KSP_x64_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\KSP 1.9.1 main\KSP_x64_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

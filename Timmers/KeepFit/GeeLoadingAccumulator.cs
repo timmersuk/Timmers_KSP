@@ -15,8 +15,6 @@ namespace KeepFit
         internal float accumPeriodSeconds { get; private set; }
 
         [Persistent]
-        private float currentGeeSecondsAccum;
-        [Persistent]
         private float currentGeeSecondsElapsed;
         [Persistent]
         private float lastGeeMeanPerSecond;
@@ -37,7 +35,6 @@ namespace KeepFit
         {
             this.accumPeriodSeconds = accumPeriodSeconds;
             this.currentGeeSecondsElapsed = 0;
-            this.currentGeeSecondsAccum = 0;
             this.lastValueValid = false;
         }
 
