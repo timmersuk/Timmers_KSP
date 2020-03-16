@@ -48,7 +48,7 @@ You can also specify that a capsule is ```CRAMPED``` or ```EXERCISING```.
 
 From there, just unzip the KeepFit folder into your GameData directory.
 
-Please let me know in [**the forum thread**](http://forum.kerbalspaceprogram.com/threads/XXXX) or on [**the GitHub issue tracker**](https://github.com/Kerbas-ad-astra/Timmers_KSP/issues) if you find any issues!
+Please let me know in [**the forum thread**](https://forum.kerbalspaceprogram.com/index.php?/topic/192466-191-keepfit-refitted-kerbal-fitness-degradation-01300-02020-mar-16/) or on [**the GitHub issue tracker**](https://github.com/Kerbas-ad-astra/Timmers_KSP/issues) if you find any issues!
 
 ## Version history and changelog
 
